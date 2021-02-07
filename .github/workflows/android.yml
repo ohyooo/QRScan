@@ -50,6 +50,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: "app\build\outputs\apk\release\app-release.apk"
+          asset_path: "app/build/outputs/apk/release/app-release.apk"
           asset_name: "${{ steps.time.outputs.time }}.apl"
           asset_content_type: application/zip
