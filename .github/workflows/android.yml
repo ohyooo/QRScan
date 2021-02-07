@@ -19,7 +19,7 @@ jobs:
         uses: nanzm/get-time-action@v1.1
         with:
           timeZone: 8
-          format: 'YYYY-MMDD-HHmm:ss'
+          format: 'YYYYMMDDHHmm:ss'
      
       - name: set up JDK 11
         uses: actions/setup-java@v1
@@ -42,6 +42,11 @@ jobs:
           release_name: Release ${{ steps.time.outputs.time }}
           draft: false
           prerelease: false
+
+      - name: Delete old release
+        uses: ame-yu/action-delete-latest-release@v2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
      
       - name: Upload Release
         id: upload-release
