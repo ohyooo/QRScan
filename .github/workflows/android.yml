@@ -19,7 +19,7 @@ jobs:
         uses: nanzm/get-time-action@v1.1
         with:
           timeZone: 8
-          format: 'YYYYMMDDHHmm:ss'
+          format: 'YYYYMMDDHHmmss'
      
       - name: set up JDK 11
         uses: actions/setup-java@v1
