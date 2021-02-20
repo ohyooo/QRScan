@@ -8,9 +8,13 @@ import android.widget.TextView
 import androidx.core.view.size
 import androidx.databinding.Observable
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.ohyooo.qrscan.databinding.FragmentHistoryBinding
 import com.ohyooo.qrscan.dp
+import com.ohyooo.qrscan.recordsDataStore
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 
 class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
 
@@ -40,12 +44,22 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
     }
 
     private fun initViews() {
-        vdb.delete.visibility = if (histories.isEmpty()) View.GONE else View.VISIBLE
         vdb.delete.setOnClickListener {
             vdb.delete.visibility = View.GONE
             histories.clear()
             vdb.history.adapter?.notifyDataSetChanged()
+            save()
         }
+
+        lifecycleScope.launch {
+            recordsDataStore.data.firstOrNull()?.let {
+                histories.clear()
+                histories.addAll(it.recordList)
+                vdb.delete.visibility = if (histories.isEmpty()) View.GONE else View.VISIBLE
+                vdb.history.adapter?.notifyDataSetChanged()
+            }
+        }
+
         vdb.history.adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
                 val v = TextView(parent.context).apply {
@@ -71,6 +85,16 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
         }
         histories.add(s)
         vdb.history.adapter?.notifyItemInserted(vdb.history.size)
+        save()
+    }
+
+    private fun save() = lifecycleScope.launch {
+        recordsDataStore.updateData { records ->
+            records.toBuilder()
+                .clearRecord()
+                .addAllRecord(histories)
+                .build()
+        }
     }
 
     companion object {

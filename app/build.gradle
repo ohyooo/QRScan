@@ -3,6 +3,7 @@ plugins {
     id "kotlin-android"
     id "kotlin-kapt"
     id "kotlin-parcelize"
+    id "com.google.protobuf" version "0.8.15"
 }
 
 android {
@@ -78,4 +79,31 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2"
 
     implementation "com.google.mlkit:barcode-scanning:16.1.1"
+
+    // Proto DataStore
+    implementation  "androidx.datastore:datastore:1.0.0-alpha06"
+
+    // Protobuf
+    implementation  "com.google.protobuf:protobuf-javalite:4.0.0-rc-2"
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:4.0.0-rc-2"
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java {
+                    option 'lite'
+                }
+            }
+        }
+    }
 }
