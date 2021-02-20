@@ -58,3 +58,14 @@ jobs:
           asset_path: "app/build/outputs/apk/release/app-release.apk"
           asset_name: "release.apk"
           asset_content_type: application/zip
+
+      - name: Upload Mapping File
+        id: upload-mapping
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: "app/build/outputs/mapping/release/mapping.txt"
+          asset_name: "mapping.txt"
+          asset_content_type: text/plain
