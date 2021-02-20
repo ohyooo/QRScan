@@ -11,7 +11,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.ohyooo.qrscan.databinding.FragmentHistoryBinding
 import com.ohyooo.qrscan.dp
-import com.orhanobut.hawk.Hawk
 
 class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
 
@@ -21,7 +20,7 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
 
     override val vdb by lazy { FragmentHistoryBinding.inflate(layoutInflater) }
 
-    private val histories: ArrayList<String> by lazy { Hawk.get("HISTORIES", ArrayList()) }
+    private val histories = ArrayList<String>(MAX_COUNT)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -45,7 +44,6 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
         vdb.delete.setOnClickListener {
             vdb.delete.visibility = View.GONE
             histories.clear()
-            Hawk.put("HISTORIES", ArrayList<String>())
             vdb.history.adapter?.notifyDataSetChanged()
         }
         vdb.history.adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -68,11 +66,14 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
 
     private fun add(s: String) {
         vdb.delete.visibility = View.VISIBLE
-        if (histories.size > 15) {
+        if (histories.size > MAX_COUNT) {
             histories.removeFirst()
         }
         histories.add(s)
-        Hawk.put("HISTORIES", histories)
         vdb.history.adapter?.notifyItemInserted(vdb.history.size)
+    }
+
+    companion object {
+        private const val MAX_COUNT = 15
     }
 }
