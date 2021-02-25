@@ -16,9 +16,7 @@ class QrCodeAnalyzer(private val qrCallback: (qrCode: String) -> Unit) : ImageAn
             return
         }
 
-        val bitmap = BitmapUtils.getBitmap(imageProxy)
-
-        val image = InputImage.fromBitmap(bitmap!!, imageProxy.imageInfo.rotationDegrees)
+        val image = InputImage.fromMediaImage(imageProxy.image!!, imageProxy.imageInfo.rotationDegrees)
 
         barcodeClient.process(image)
             .addOnSuccessListener { r ->
