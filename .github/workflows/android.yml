@@ -48,7 +48,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.time.outputs.time }}
-          release_name: Release ${{ steps.time.outputs.time }}
+          release_name: QRScan Release ${{ steps.time.outputs.time }}
           draft: false
           prerelease: false
 
@@ -65,7 +65,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: "app/build/outputs/apk/release/app-release.apk"
-          asset_name: "release.apk"
+          asset_name: "QRScan_ohyooo_${{ steps.time.outputs.time }}.apk"
           asset_content_type: application/zip
 
       - name: Upload Mapping File
