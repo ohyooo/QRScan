@@ -74,6 +74,7 @@ jobs:
       #     asset_name: "mapping.txt"
       #     asset_content_type: text/plain
 
+    - name Create Multi-Release
     - uses: actions/checkout@v2
     - run: |
         set -x
