@@ -40,20 +40,7 @@ jobs:
 
       - name: Build APK
         run: ./gradlew assembleRelease
-
-      - name: Create Release
-          run: |
-            set -x
-            assets=()
-            for asset in app/build/outputs/apk/release/*.apk; do
-              assets+=("-a" "$asset")
-            done
-            assets+=("-a" "app/build/outputs/mapping/release/mapping.txt")
-            tag_name="${GITHUB_REF##*/}"
-            hub release create "${assets[@]}" -m "$tag_name" "$tag_name"
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+     
       - name: Remove old Releases
         uses: dev-drprasad/delete-older-releases@v0.2.0
         env:
@@ -61,6 +48,7 @@ jobs:
         with:
           keep_latest: 5
           delete_tags: true
+
 
       - name: Delete workflow runs
         uses: GitRML/delete-workflow-runs@main
