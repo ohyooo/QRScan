@@ -50,7 +50,7 @@ jobs:
           delete_tags: true
 
       - name: Create Release
-          run: |
+          run:
             set -x
             assets=()
             for asset in app/build/outputs/apk/release/*.apk; do
