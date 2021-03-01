@@ -51,33 +51,41 @@ jobs:
           release_name: QRScan Release ${{ steps.time.outputs.time }}
           draft: false
           prerelease: false
-
-#       - name: Delete old release
-#         uses: ame-yu/action-delete-latest-release@v2
-#         with:
-#           github_token: ${{ secrets.GITHUB_TOKEN }}
      
-      - name: Upload Release
-        id: upload-release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: "app/build/outputs/apk/release/app-release.apk"
-          asset_name: "QRScan_ohyooo_${{ steps.time.outputs.time }}.apk"
-          asset_content_type: application/zip
+      # - name: Upload Release
+      #   id: upload-release
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: "app/build/outputs/apk/release/app-release.apk"
+      #     asset_name: "QRScan_ohyooo_${{ steps.time.outputs.time }}.apk"
+      #     asset_content_type: application/zip
 
-      - name: Upload Mapping File
-        id: upload-mapping
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: "app/build/outputs/mapping/release/mapping.txt"
-          asset_name: "mapping.txt"
-          asset_content_type: text/plain
+      # - name: Upload Mapping File
+      #   id: upload-mapping
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: "app/build/outputs/mapping/release/mapping.txt"
+      #     asset_name: "mapping.txt"
+      #     asset_content_type: text/plain
+
+    - uses: actions/checkout@v2
+    - run: |
+        set -x
+        assets=()
+        for asset in app/build/outputs/apk/release/*.apk; do
+          assets+=("-a" "$asset")
+        done
+        assets+=("-a" "app/build/outputs/mapping/release/mapping.txt")
+        tag_name="${GITHUB_REF##*/}"
+        hub release create "${assets[@]}" -m "$tag_name" "$tag_name"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Remove old Releases
         uses: dev-drprasad/delete-older-releases@v0.2.0
@@ -86,7 +94,6 @@ jobs:
         with:
           keep_latest: 5
           delete_tags: true
-
 
       - name: Delete workflow runs
         uses: GitRML/delete-workflow-runs@main
