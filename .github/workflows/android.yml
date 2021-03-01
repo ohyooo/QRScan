@@ -41,7 +41,7 @@ jobs:
       - name: Build APK
         run: ./gradlew assembleRelease
 
-      - uses: actions/checkout@v2
+      - name: Create Release
           run: |
             set -x
             assets=()
