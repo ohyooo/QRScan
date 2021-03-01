@@ -41,8 +41,7 @@ jobs:
       - name: Build APK
         run: ./gradlew assembleRelease
 
-      - name: Create Multi-Release
-          uses: actions/checkout@v2
+      - uses: actions/checkout@v2
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           run: |
