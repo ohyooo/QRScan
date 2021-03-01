@@ -42,8 +42,6 @@ jobs:
         run: ./gradlew assembleRelease
 
       - uses: actions/checkout@v2
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           run: |
             set -x
             assets=()
@@ -53,6 +51,8 @@ jobs:
             assets+=("-a" "app/build/outputs/mapping/release/mapping.txt")
             tag_name="${GITHUB_REF##*/}"
             hub release create "${assets[@]}" -m "$tag_name" "$tag_name"
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Remove old Releases
         uses: dev-drprasad/delete-older-releases@v0.2.0
