@@ -18,7 +18,7 @@ import java.io.OutputStream
 object RecordsSerializer : Serializer<Records> {
     override val defaultValue: Records = Records.getDefaultInstance()
 
-    override fun readFrom(input: InputStream): Records {
+    override suspend fun readFrom(input: InputStream): Records {
         try {
             return Records.parseFrom(input)
         } catch (exception: InvalidProtocolBufferException) {
@@ -26,7 +26,7 @@ object RecordsSerializer : Serializer<Records> {
         }
     }
 
-    override fun writeTo(t: Records, output: OutputStream) = t.writeTo(output)
+    override suspend fun writeTo(t: Records, output: OutputStream) = t.writeTo(output)
 }
 
 val recordsDataStore: DataStore<Records> = App.INSTANCE.createDataStore(
