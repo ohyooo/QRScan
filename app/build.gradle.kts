@@ -16,6 +16,17 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("..\\signkey.jks")
+            storePassword = "123456"
+            keyPassword = "123456"
+            keyAlias = "demo"
+
+            enableV3Signing = true
+            enableV4Signing = true
+        }
+    }
     compileSdkVersion(Ext.compileSdkVersion)
     buildToolsVersion(Ext.buildToolsVersion)
     defaultConfig {
@@ -24,6 +35,7 @@ android {
         versionCode(Ext.versionCode)
         versionName(Ext.versionName)
         consumerProguardFiles("consumer-rules.pro")
+        signingConfig = signingConfigs.getByName("debug")
     }
     buildTypes {
         debug {
