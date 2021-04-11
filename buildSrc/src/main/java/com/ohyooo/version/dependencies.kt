@@ -13,15 +13,16 @@ object Ext {
 }
 
 object Libs {
-    object Kotlin {
-        const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-        const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3"
-    }
 
     object Plugin {
         const val AGP = "com.android.tools.build:gradle:7.0.0-alpha14"
         const val KGP = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         const val PGP = "com.google.protobuf:protobuf-gradle-plugin:0.8.15"
+    }
+
+    object Kotlin {
+        const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+        const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3"
     }
 
     object Google {
