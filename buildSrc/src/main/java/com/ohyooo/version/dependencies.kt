@@ -21,15 +21,12 @@ object Libs {
     object Plugin {
         const val AGP = "com.android.tools.build:gradle:7.0.0-alpha14"
         const val KGP = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        const val KS = "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
-        const val GOOGLE_SERVICE = "com.google.gms:google-services:4.3.5"
+        const val PGP = "com.google.protobuf:protobuf-gradle-plugin:0.8.15"
     }
 
     object Google {
-        const val barcode = "com.google.mlkit:barcode-scanning:16.1.1"
-        const val protobuf = "com.google.protobuf:protobuf-javalite:4.0.0-rc-2"
-        const val protoc = "com.google.protobuf:protoc:4.0.0-rc-2"
         const val material = "com.google.android.material:material:1.4.0-alpha02"
+        const val barcode = "com.google.mlkit:barcode-scanning:16.1.1"
     }
 
     object AndroidX {
@@ -47,6 +44,14 @@ object Libs {
         const val camera2 = "androidx.camera:camera-camera2:${camerax_version}"
         const val lifecycle = "androidx.camera:camera-lifecycle:${camerax_version}"
         const val view = "androidx.camera:camera-view:1.0.0-alpha22"
+    }
+
+    object Protobuf{
+        const val protobuf = "com.google.protobuf:protobuf-javalite:4.0.0-rc-2"
+        const val protoc = "com.google.protobuf:protoc:4.0.0-rc-2"
+        private const val grpcVersion = "1.37.0"
+        const val java = "io.grpc:protoc-gen-grpc-java:1.37.0"
+        const val kotlin = "io.grpc:protoc-gen-grpc-kotlin:1.0.0"
     }
 
 }
