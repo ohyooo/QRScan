@@ -49,7 +49,6 @@ object Libs {
     object Protobuf{
         const val protobuf = "com.google.protobuf:protobuf-javalite:4.0.0-rc-2"
         const val protoc = "com.google.protobuf:protoc:4.0.0-rc-2"
-        private const val grpcVersion = "1.37.0"
         const val java = "io.grpc:protoc-gen-grpc-java:1.37.0"
         const val kotlin = "io.grpc:protoc-gen-grpc-kotlin:1.0.0"
     }

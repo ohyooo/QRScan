@@ -30,6 +30,7 @@ android {
     compileSdkVersion(Ext.compileSdkVersion)
     buildToolsVersion(Ext.buildToolsVersion)
     defaultConfig {
+        applicationId(Ext.applicationId)
         minSdkVersion(Ext.minSdkVersion)
         targetSdkVersion(Ext.targetSdkVersion)
         versionCode(Ext.versionCode)
