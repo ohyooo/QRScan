@@ -4,9 +4,9 @@ private const val kotlin_version = "1.4.32"
 
 object Ext {
     const val applicationId = "com.ohyooo.qrscan"
-    const val minSdkVersion = 21
     const val compileSdkVersion = 30
     const val buildToolsVersion = "30.0.3"
+    const val minSdkVersion = 21
     const val targetSdkVersion = 30
     const val versionCode = 3
     const val versionName = "2.1"
@@ -47,11 +47,32 @@ object Libs {
         const val view = "androidx.camera:camera-view:1.0.0-alpha22"
     }
 
-    object Protobuf{
+    object Protobuf {
         const val protobuf = "com.google.protobuf:protobuf-javalite:4.0.0-rc-2"
         const val protoc = "com.google.protobuf:protoc:4.0.0-rc-2"
         const val java = "io.grpc:protoc-gen-grpc-java:1.37.0"
         const val kotlin = "io.grpc:protoc-gen-grpc-kotlin:1.0.0"
     }
 
+    val apis = listOf(AndroidX.recyclerview)
+
+    val implementations = listOf(
+        Kotlin.stdlib,
+        Kotlin.coroutines,
+        Google.material,
+        Google.barcode,
+        AndroidX.appcompat,
+        AndroidX.coreKtx,
+        AndroidX.fragmentKtx,
+        AndroidX.constraintLayout,
+        AndroidX.datastore,
+        AndroidX.lifecycle,
+        Camera.camera2,
+        Camera.lifecycle,
+        Camera.view,
+        Protobuf.protobuf,
+        Protobuf.protoc,
+        Protobuf.java,
+        Protobuf.kotlin,
+    )
 }

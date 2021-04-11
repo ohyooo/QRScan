@@ -65,30 +65,8 @@ android {
 }
 
 dependencies {
-
-    implementation(Libs.AndroidX.coreKtx)
-    implementation(Libs.AndroidX.appcompat)
-    implementation(Libs.AndroidX.constraintLayout)
-    implementation(Libs.AndroidX.fragmentKtx)
-    api(Libs.AndroidX.recyclerview)
-    implementation(Libs.Google.material)
-
-    implementation(Libs.Camera.camera2)
-    implementation(Libs.Camera.lifecycle)
-    implementation(Libs.Camera.view)
-
-    implementation(Libs.AndroidX.lifecycle)
-
-    implementation(Libs.Kotlin.stdlib)
-    implementation(Libs.Kotlin.coroutines)
-
-    implementation(Libs.Google.barcode)
-
-    // Proto DataStore
-    implementation(Libs.AndroidX.datastore)
-
-    // Protobuf
-    implementation(Libs.Protobuf.protobuf)
+    Libs.implementations.forEach(::implementation)
+    Libs.apis.forEach(::api)
 }
 
 tasks.withType<KotlinCompile> {
