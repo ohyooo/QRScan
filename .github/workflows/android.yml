@@ -26,15 +26,6 @@ jobs:
         with:
           java-version: 11
           
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-     
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
@@ -81,7 +72,6 @@ jobs:
         with:
           keep_latest: 5
           delete_tags: true
-
 
       - name: Delete workflow runs
         uses: GitRML/delete-workflow-runs@main
