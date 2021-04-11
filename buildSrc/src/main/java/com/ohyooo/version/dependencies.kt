@@ -1,0 +1,52 @@
+package com.ohyooo.version
+
+private const val kotlin_version = "1.4.32"
+
+object Ext {
+    const val applicationId = "com.ohyooo.qrscan"
+    const val minSdkVersion = 21
+    const val compileSdkVersion = 30
+    const val buildToolsVersion = "30.0.3"
+    const val targetSdkVersion = 30
+    const val versionCode = 3
+    const val versionName = "2.1"
+}
+
+object Libs {
+    object Kotlin {
+        const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+        const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3"
+    }
+
+    object Plugin {
+        const val AGP = "com.android.tools.build:gradle:7.0.0-alpha14"
+        const val KGP = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        const val KS = "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
+        const val GOOGLE_SERVICE = "com.google.gms:google-services:4.3.5"
+    }
+
+    object Google {
+        const val barcode = "com.google.mlkit:barcode-scanning:16.1.1"
+        const val protobuf = "com.google.protobuf:protobuf-javalite:4.0.0-rc-2"
+        const val protoc = "com.google.protobuf:protoc:4.0.0-rc-2"
+        const val material = "com.google.android.material:material:1.4.0-alpha02"
+    }
+
+    object AndroidX {
+        const val appcompat = "androidx.appcompat:appcompat:1.3.0-rc01"
+        const val coreKtx = "androidx.core:core-ktx:1.6.0-alpha01"
+        const val fragmentKtx = "androidx.fragment:fragment-ktx:1.3.2"
+        const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.1.0-beta01"
+        const val recyclerview = "androidx.recyclerview:recyclerview:1.2.0"
+        const val datastore = "androidx.datastore:datastore:1.0.0-alpha08"
+        const val lifecycle = "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
+    }
+
+    object Camera {
+        private const val camerax_version = "1.1.0-alpha02"
+        const val camera2 = "androidx.camera:camera-camera2:${camerax_version}"
+        const val lifecycle = "androidx.camera:camera-lifecycle:${camerax_version}"
+        const val view = "androidx.camera:camera-view:1.0.0-alpha22"
+    }
+
+}
