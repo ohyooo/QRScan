@@ -57,22 +57,19 @@ object Libs {
     val apis = listOf(AndroidX.recyclerview)
 
     val implementations = listOf(
-        Kotlin.stdlib,
-        Kotlin.coroutines,
-        Google.material,
-        Google.barcode,
         AndroidX.appcompat,
-        AndroidX.coreKtx,
-        AndroidX.fragmentKtx,
         AndroidX.constraintLayout,
+        AndroidX.coreKtx,
         AndroidX.datastore,
+        AndroidX.fragmentKtx,
         AndroidX.lifecycle,
         Camera.camera2,
         Camera.lifecycle,
         Camera.view,
+        Google.barcode,
+        Google.material,
+        Kotlin.coroutines,
+        Kotlin.stdlib,
         Protobuf.protobuf,
-        Protobuf.protoc,
-        Protobuf.java,
-        Protobuf.kotlin,
     )
 }
