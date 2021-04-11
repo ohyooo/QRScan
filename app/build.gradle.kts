@@ -1,11 +1,11 @@
 import com.google.protobuf.gradle.builtins
-import com.ohyooo.version.Libs
-import com.ohyooo.version.Ext
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import com.google.protobuf.gradle.generateProtoTasks
+import com.google.protobuf.gradle.id
 import com.google.protobuf.gradle.protobuf
 import com.google.protobuf.gradle.protoc
-import com.google.protobuf.gradle.*
+import com.ohyooo.version.Ext
+import com.ohyooo.version.Libs
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("com.android.application")
