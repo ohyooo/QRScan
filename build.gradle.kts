@@ -4,9 +4,9 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath(com.ohyooo.version.Libs.Plugin.AGP)
-        classpath(com.ohyooo.version.Libs.Plugin.KGP)
-        classpath(com.ohyooo.version.Libs.Plugin.PGP)
+        classpath("com.android.tools.build:gradle:7.0.0-alpha14")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.32")
+        classpath("com.google.protobuf:protobuf-gradle-plugin:0.8.15")
     }
 }
 

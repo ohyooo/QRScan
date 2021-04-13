@@ -1,6 +1,13 @@
-package com.ohyooo.version
+import org.gradle.api.Plugin
+import org.gradle.api.Project
 
 private const val kotlin_version = "1.4.32"
+
+
+class Deps : Plugin<Project> {
+    override fun apply(target: Project) {
+    }
+}
 
 object Ext {
     const val applicationId = "com.ohyooo.qrscan"
@@ -50,7 +57,7 @@ object Libs {
     object Protobuf {
         const val protobuf = "com.google.protobuf:protobuf-javalite:4.0.0-rc-2"
         const val protoc = "com.google.protobuf:protoc:4.0.0-rc-2"
-        const val java = "io.grpc:protoc-gen-grpc-java:1.37.0"
+        const val java = "io.grpc:protoc-gen-grpc-kotlin:1.37.0"
         const val kotlin = "io.grpc:protoc-gen-grpc-kotlin:1.0.0"
     }
 

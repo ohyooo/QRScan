@@ -3,8 +3,6 @@ import com.google.protobuf.gradle.generateProtoTasks
 import com.google.protobuf.gradle.id
 import com.google.protobuf.gradle.protobuf
 import com.google.protobuf.gradle.protoc
-import com.ohyooo.version.Ext
-import com.ohyooo.version.Libs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -12,6 +10,7 @@ plugins {
     kotlin("android")
     kotlin("kapt")
     id("com.google.protobuf")
+    id("deps")
 }
 
 android {
