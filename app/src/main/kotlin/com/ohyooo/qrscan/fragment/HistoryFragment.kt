@@ -52,7 +52,7 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
         }
 
         lifecycleScope.launch {
-            recordsDataStore.data.firstOrNull()?.let {
+            recordsDataStore.data.firstOrNull().let {
                 histories.clear()
                 histories.addAll(it.recordList)
                 vdb.delete.visibility = if (histories.isEmpty()) View.GONE else View.VISIBLE
