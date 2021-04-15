@@ -52,12 +52,12 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
         }
 
         lifecycleScope.launch {
-            recordsDataStore.data.firstOrNull().let {
-                histories.clear()
+            histories.clear()
+            recordsDataStore.data.firstOrNull()?.let {
                 histories.addAll(it.recordList)
-                vdb.delete.visibility = if (histories.isEmpty()) View.GONE else View.VISIBLE
-                vdb.history.adapter?.notifyDataSetChanged()
             }
+            vdb.delete.visibility = if (histories.isEmpty()) View.GONE else View.VISIBLE
+            vdb.history.adapter?.notifyDataSetChanged()
         }
 
         vdb.history.adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
