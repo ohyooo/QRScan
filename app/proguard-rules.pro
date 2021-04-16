@@ -20,4 +20,5 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep class com.ohyooo.qrscan.Records { *; }
+-keep public class * extends com.google.protobuf.GeneratedMessageLite { *; }
+-keepclassmembers class com.ohyooo.qrscan.Records { *; }
