@@ -42,7 +42,6 @@ object Libs {
         const val coreKtx = "androidx.core:core-ktx:1.6.0-alpha01"
         const val fragmentKtx = "androidx.fragment:fragment-ktx:1.3.2"
         const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.1.0-beta01"
-        const val recyclerview = "androidx.recyclerview:recyclerview:1.2.0"
         const val datastore = "androidx.datastore:datastore:1.0.0-alpha08"
         const val lifecycle = "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
         const val compose = "androidx.activity:activity-compose:1.3.0-alpha06"
@@ -75,8 +74,6 @@ object Libs {
         const val java = "io.grpc:protoc-gen-grpc-kotlin:1.37.0"
         const val kotlin = "io.grpc:protoc-gen-grpc-kotlin:1.0.0"
     }
-
-    val apis = listOf(AndroidX.recyclerview)
 
     val implementations = listOf(
         AndroidX.appcompat,

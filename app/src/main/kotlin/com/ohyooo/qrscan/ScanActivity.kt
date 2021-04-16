@@ -80,7 +80,7 @@ class ScanActivity : AppCompatActivity() {
                     Toast.makeText(this, "no data decoded", Toast.LENGTH_SHORT).show()
                 } else {
                     r.result?.firstOrNull()?.displayValue?.let {
-                        vm.result.set(it)
+                        vm.result.value = it
                         vm.currentTab.set(0)
                     }
                 }
@@ -156,7 +156,7 @@ class ScanActivity : AppCompatActivity() {
             val now = System.currentTimeMillis()
             if (now - lastTime > 1000) {
                 lastTime = now
-                vm.result.set(r)
+                vm.result.value = r
             }
         })
     }

@@ -68,7 +68,6 @@ android {
 
 dependencies {
     Libs.implementations.forEach(::implementation)
-    Libs.apis.forEach(::api)
 }
 
 tasks.withType<KotlinCompile> {

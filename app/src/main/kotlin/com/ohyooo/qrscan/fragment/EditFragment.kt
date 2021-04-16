@@ -10,13 +10,14 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.databinding.Observable
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 
@@ -25,19 +26,6 @@ class EditFragment : Fragment(), HasTitle {
     override val title = "Edit"
 
     private val vm by activityViewModels<ResultViewModel>()
-
-    var text = mutableStateOf("")
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        vm.result.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                text.value = vm.result.get() ?: ""
-            }
-        })
-
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val context = context ?: return null
@@ -51,9 +39,10 @@ class EditFragment : Fragment(), HasTitle {
 
     @Composable
     fun EditText() {
+        var text by remember { vm.result }
         TextField(
-            value = text.value,
-            onValueChange = { text.value = it },
+            value = text,
+            onValueChange = { text = it },
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
