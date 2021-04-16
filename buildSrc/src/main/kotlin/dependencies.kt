@@ -1,13 +1,3 @@
-import org.gradle.api.Plugin
-import org.gradle.api.Project
-
-
-
-class Deps : Plugin<Project> {
-    override fun apply(target: Project) {
-    }
-}
-
 object Ext {
     const val applicationId = "com.ohyooo.qrscan"
     const val compileSdkVersion = 30

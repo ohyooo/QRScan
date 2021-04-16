@@ -6,7 +6,6 @@ plugins {
     kotlin("android")
     kotlin("kapt")
     id("com.google.protobuf")
-    id("deps")
 }
 
 android {
