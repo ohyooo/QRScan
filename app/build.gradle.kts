@@ -11,7 +11,7 @@ plugins {
 
 android {
     signingConfigs {
-        create("debug") {
+        create("debugKey") {
             storeFile = file("..\\signkey.jks")
             storePassword = "123456"
             keyPassword = "123456"
@@ -30,7 +30,7 @@ android {
         versionCode(Ext.versionCode)
         versionName(Ext.versionName)
         consumerProguardFiles("consumer-rules.pro")
-        signingConfig = signingConfigs.getByName("debug")
+        signingConfig = signingConfigs.getByName("debugKey")
     }
     buildTypes {
         debug {
