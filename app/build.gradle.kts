@@ -1,8 +1,4 @@
-import com.google.protobuf.gradle.builtins
-import com.google.protobuf.gradle.generateProtoTasks
-import com.google.protobuf.gradle.id
-import com.google.protobuf.gradle.protobuf
-import com.google.protobuf.gradle.protoc
+import com.google.protobuf.gradle.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -55,8 +51,13 @@ android {
         useIR = true
     }
     buildFeatures {
-        viewBinding = true
+        compose = true
         dataBinding = true
+        viewBinding = true
+    }
+    composeOptions {
+        kotlinCompilerVersion = Libs.kotlin_version
+        kotlinCompilerExtensionVersion = Libs.Compose.compose_version
     }
     lint {
         isCheckReleaseBuilds = false
