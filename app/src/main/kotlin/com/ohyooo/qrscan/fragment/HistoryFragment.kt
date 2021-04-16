@@ -36,7 +36,7 @@ class HistoryFragment : Fragment(), HasTitle {
         val context = context ?: return null
         return ComposeView(context).apply {
             setContent {
-                DeleteButton()
+                History()
             }
         }
     }
@@ -48,19 +48,19 @@ class HistoryFragment : Fragment(), HasTitle {
     private fun initViews() {
         lifecycleScope.launch {
             histories.clear()
-            recordsDataStore.data.firstOrNull()?.let {
+            context?.recordsDataStore?.data?.firstOrNull()?.let {
                 histories.addAll(it.recordList)
             }
         }
     }
 
     @Composable
-    fun Content() {
+    fun History() {
         Column(
             modifier = Modifier.verticalScroll(state = ScrollState(0))
         ) {
-            DeleteButton()
-            HistoryList()
+            // DeleteButton()
+            // HistoryList()
         }
     }
 
@@ -103,7 +103,7 @@ class HistoryFragment : Fragment(), HasTitle {
     }
 
     private fun save() = lifecycleScope.launch {
-        recordsDataStore.updateData { records ->
+        context?.recordsDataStore?.updateData { records ->
             records.toBuilder()
                 .clearRecord()
                 .addAllRecord(histories)
