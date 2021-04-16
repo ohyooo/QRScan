@@ -59,8 +59,8 @@ class HistoryFragment : Fragment(), HasTitle {
         Column(
             modifier = Modifier.verticalScroll(state = ScrollState(0))
         ) {
-            // DeleteButton()
-            // HistoryList()
+            DeleteButton()
+            HistoryList()
         }
     }
 
