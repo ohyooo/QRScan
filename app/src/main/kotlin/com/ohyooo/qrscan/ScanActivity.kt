@@ -15,17 +15,14 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.Observable
+import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.mlkit.vision.common.InputImage
 import com.ohyooo.qrscan.databinding.ActivityScanBinding
-import com.ohyooo.qrscan.fragment.EditFragment
-import com.ohyooo.qrscan.fragment.HistoryFragment
-import com.ohyooo.qrscan.fragment.LocalFragment
-import com.ohyooo.qrscan.fragment.ResultFragment
-import com.ohyooo.qrscan.fragment.ResultViewModel
+import com.ohyooo.qrscan.fragment.*
 import java.util.concurrent.Executors
 import kotlin.math.max
 
@@ -105,7 +102,7 @@ class ScanActivity : AppCompatActivity() {
         vdb.viewPager.adapter = object : FragmentStateAdapter(this) {
             override fun getItemCount() = fragments.size
 
-            override fun createFragment(position: Int) = fragments[position]
+            override fun createFragment(position: Int) = fragments[position] as Fragment
         }
 
         vdb.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -122,7 +119,7 @@ class ScanActivity : AppCompatActivity() {
         }
 
         TabLayoutMediator(vdb.tabLayout, vdb.viewPager) { tab, position ->
-            tab.text = fragments[position].title
+            tab.text = (fragments[position] as HasTitle).title
         }.attach()
     }
 
