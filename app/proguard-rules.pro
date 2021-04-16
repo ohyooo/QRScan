@@ -23,7 +23,4 @@
 -keep class * extends com.google.protobuf.GeneratedMessageLite { *; }
 -keep public class * extends com.google.protobuf.GeneratedMessageLite { *; }
 
--keep class com.ohyooo.qrscan.Records { *; }
--keepclassmembers class com.ohyooo.qrscan.Records {
-    public protected private <fields>;
-}
+-keep class com.ohyooo.qrscan.RecordsSerializer { *; }
