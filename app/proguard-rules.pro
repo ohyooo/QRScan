@@ -20,5 +20,12 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
+-keep class * extends com.google.protobuf.GeneratedMessageLite { *; }
 -keep public class * extends com.google.protobuf.GeneratedMessageLite { *; }
 -keepclassmembers class com.ohyooo.qrscan.Records { *; }
+
+-assumevalues class com.google.protobuf.Android { static boolean ASSUME_ANDROID return true; }
+
+-keepclassmembers class * extends com.google.protobuf.GeneratedMessageLite {
+  <fields>;
+}
