@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -33,12 +34,14 @@ class ResultFragment : Fragment(), HasTitle {
 
     @Composable
     fun ContentText() {
-        Text(
-            text = vm.result.value,
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(),
-            style = TextStyle(color = Color.Green)
-        )
+        SelectionContainer {
+            Text(
+                text = vm.result.value,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                style = TextStyle(color = Color.Green)
+            )
+        }
     }
 }

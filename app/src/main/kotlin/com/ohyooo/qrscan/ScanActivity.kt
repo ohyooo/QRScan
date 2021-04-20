@@ -115,7 +115,7 @@ class ScanActivity : AppCompatActivity() {
             val previewHeight = vdb.mainView.height - vdb.previewView.height
             behavior.peekHeight = max(vdb.tabLayout.height, previewHeight) * 2
 
-            (vdb.container.layoutParams as ConstraintLayout.LayoutParams).topMargin = 308.dp
+            (vdb.container.layoutParams as ConstraintLayout.LayoutParams).topMargin = 200.dp
         }
 
         TabLayoutMediator(vdb.tabLayout, vdb.viewPager) { tab, position ->
