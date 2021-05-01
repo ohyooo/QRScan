@@ -14,7 +14,7 @@ object Ext {
 object Libs {
 
     object Plugin {
-        const val AGP = "com.android.tools.build:gradle:7.0.0-alpha14"
+        const val AGP = "com.android.tools.build:gradle:7.0.0-alpha15"
         const val KGP = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         const val PGP = "com.google.protobuf:protobuf-gradle-plugin:0.8.15"
     }
