@@ -1,6 +1,5 @@
 private const val kotlin_version = "1.4.32"
 
-
 object Ext {
     const val applicationId = "com.ohyooo.qrscan"
     const val compileSdk = 30
@@ -16,7 +15,7 @@ object Libs {
     object Plugin {
         const val AGP = "com.android.tools.build:gradle:7.0.0-alpha15"
         const val KGP = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        const val PGP = "com.google.protobuf:protobuf-gradle-plugin:0.8.15"
+        const val PGP = "com.google.protobuf:protobuf-gradle-plugin:0.8.16"
     }
 
     object Kotlin {
@@ -36,19 +35,20 @@ object Libs {
         const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.1.0-beta01"
         const val recyclerview = "androidx.recyclerview:recyclerview:1.2.0"
         const val datastore = "androidx.datastore:datastore:1.0.0-beta01"
-        const val lifecycle = "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
+        const val lifecycle = "androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0-alpha01"
     }
 
     object Camera {
-        private const val camerax_version = "1.1.0-alpha02"
+        private const val camerax_version = "1.1.0-alpha04"
         const val camera2 = "androidx.camera:camera-camera2:${camerax_version}"
         const val lifecycle = "androidx.camera:camera-lifecycle:${camerax_version}"
-        const val view = "androidx.camera:camera-view:1.0.0-alpha22"
+        const val view = "androidx.camera:camera-view:1.0.0-alpha24"
     }
 
     object Protobuf {
-        const val protobuf = "com.google.protobuf:protobuf-javalite:4.0.0-rc-2"
-        const val protoc = "com.google.protobuf:protoc:4.0.0-rc-2"
+        private const val protobuf_version = "4.0.0-rc-2"
+        const val protobuf = "com.google.protobuf:protobuf-javalite:$protobuf_version"
+        const val protoc = "com.google.protobuf:protoc:$protobuf_version"
         const val java = "io.grpc:protoc-gen-grpc-kotlin:1.37.0"
         const val kotlin = "io.grpc:protoc-gen-grpc-kotlin:1.0.0"
     }
