@@ -20,15 +20,15 @@ android {
             enableV4Signing = true
         }
     }
-    compileSdkVersion(Ext.compileSdkVersion)
-    buildToolsVersion(Ext.buildToolsVersion)
+    compileSdk = Ext.compileSdkVersion
+    buildToolsVersion = Ext.buildToolsVersion
     defaultConfig {
-        applicationId(Ext.applicationId)
-        minSdkVersion(Ext.minSdkVersion)
-        targetSdkVersion(Ext.targetSdkVersion)
-        versionCode(Ext.versionCode)
-        versionName(Ext.versionName)
-        consumerProguardFiles("consumer-rules.pro")
+        applicationId = Ext.applicationId
+        minSdk = Ext.minSdkVersion
+        targetSdk = Ext.targetSdkVersion
+        versionCode = Ext.versionCode
+        versionName = Ext.versionName
+        proguardFile("consumer-rules.pro")
         signingConfig = signingConfigs.getByName("debug")
     }
     buildTypes {
