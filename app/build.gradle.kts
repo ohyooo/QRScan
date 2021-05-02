@@ -20,12 +20,12 @@ android {
             enableV4Signing = true
         }
     }
-    compileSdk = Ext.compileSdkVersion
+    compileSdk = Ext.compileSdk
     buildToolsVersion = Ext.buildToolsVersion
     defaultConfig {
         applicationId = Ext.applicationId
-        minSdk = Ext.minSdkVersion
-        targetSdk = Ext.targetSdkVersion
+        minSdk = Ext.minSdk
+        targetSdk = Ext.targetSdk
         versionCode = Ext.versionCode
         versionName = Ext.versionName
         proguardFile("consumer-rules.pro")

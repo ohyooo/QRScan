@@ -3,10 +3,10 @@ private const val kotlin_version = "1.4.32"
 
 object Ext {
     const val applicationId = "com.ohyooo.qrscan"
-    const val compileSdkVersion = 30
+    const val compileSdk = 30
     const val buildToolsVersion = "30.0.3"
-    const val minSdkVersion = 21
-    const val targetSdkVersion = 30
+    const val minSdk = 21
+    const val targetSdk = 30
     const val versionCode = 3
     const val versionName = "2.1"
 }
