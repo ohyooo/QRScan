@@ -32,17 +32,17 @@ import kotlin.math.max
 class ScanActivity : AppCompatActivity() {
 
     private val vm by viewModels<ResultViewModel>()
-    private val vdb by lazy { ActivityScanBinding.inflate(layoutInflater) }
+    private val vdb by lazy(LazyThreadSafetyMode.NONE) { ActivityScanBinding.inflate(layoutInflater) }
 
     private val fragments = arrayOf(ResultFragment(), EditFragment(), LocalFragment(), HistoryFragment())
 
-    private val behavior by lazy { BottomSheetBehavior.from(vdb.bottomSheet) }
+    private val behavior by lazy(LazyThreadSafetyMode.NONE) { BottomSheetBehavior.from(vdb.bottomSheet) }
 
     private var manuallyControl = false
 
     private val cameraExecutor = Executors.newSingleThreadExecutor()
 
-    private val imageAnalysis by lazy {
+    private val imageAnalysis by lazy(LazyThreadSafetyMode.NONE) {
         ImageAnalysis.Builder()
             .setTargetResolution(Size(vdb.previewView.width, vdb.previewView.height))
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)

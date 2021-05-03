@@ -9,5 +9,5 @@ class EditFragment : BaseFragment<FragmentEditBinding>() {
 
     private val vm by activityViewModels<ResultViewModel>()
 
-    override val vdb by lazy { FragmentEditBinding.inflate(layoutInflater).also { it.vm = vm } }
+    override val vdb by lazy(LazyThreadSafetyMode.NONE) { FragmentEditBinding.inflate(layoutInflater).also { it.vm = vm } }
 }

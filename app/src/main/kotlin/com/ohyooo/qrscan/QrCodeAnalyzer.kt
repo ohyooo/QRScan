@@ -28,7 +28,7 @@ class QrCodeAnalyzer(private val qrCallback: (qrCode: String) -> Unit) : ImageAn
     }
 }
 
-val barcodeClient by lazy {
+val barcodeClient by lazy(LazyThreadSafetyMode.NONE) {
     BarcodeScanning.getClient(
         BarcodeScannerOptions.Builder()
             .setBarcodeFormats(Barcode.FORMAT_ALL_FORMATS)

@@ -22,7 +22,7 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
 
     private val vm by activityViewModels<ResultViewModel>()
 
-    override val vdb by lazy { FragmentHistoryBinding.inflate(layoutInflater) }
+    override val vdb by lazy(LazyThreadSafetyMode.NONE) { FragmentHistoryBinding.inflate(layoutInflater) }
 
     private val histories = ArrayList<String>(MAX_COUNT)
 
