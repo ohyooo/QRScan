@@ -1,4 +1,4 @@
-private const val kotlin_version = "1.4.32"
+private const val kotlin_version = "1.5.0"
 
 object Ext {
     const val applicationId = "com.ohyooo.qrscan"
@@ -20,7 +20,7 @@ object Libs {
 
     object Kotlin {
         const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-        const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3"
+        const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0-RC"
     }
 
     object Google {
