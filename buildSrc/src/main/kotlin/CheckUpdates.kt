@@ -38,7 +38,11 @@ object CheckUpdate {
         val xml = try {
             URL(url.toString()).readText()
         } catch (e: Exception) {
-            URL(url.toString().replace(GOOGLE_URL, MAVEN_CENTRAL_URL)).readText()
+            if (url.contains(GOOGLE_URL)) {
+                URL(url.toString().replace(GOOGLE_URL, MAVEN_CENTRAL_URL)).readText()
+            } else {
+                URL(url.toString().replace(MAVEN_CENTRAL_URL, GOOGLE_URL)).readText()
+            }
         }
 
         val latestVersion = latestRegex.find(xml)?.value
