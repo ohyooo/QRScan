@@ -1,4 +1,8 @@
-import com.google.protobuf.gradle.*
+import com.google.protobuf.gradle.builtins
+import com.google.protobuf.gradle.generateProtoTasks
+import com.google.protobuf.gradle.id
+import com.google.protobuf.gradle.protobuf
+import com.google.protobuf.gradle.protoc
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -28,17 +32,17 @@ android {
         targetSdk = Ext.targetSdk
         versionCode = Ext.versionCode
         versionName = Ext.versionName
-        proguardFile("consumer-rules.pro")
+        proguardFile("proguard-rules.pro")
         signingConfig = signingConfigs.getByName("debug")
     }
     buildTypes {
         debug {
             isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "consumer-rules.pro")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         release {
             isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "consumer-rules.pro")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
     compileOptions {
@@ -47,7 +51,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
-        useIR = true
     }
     buildFeatures {
         viewBinding = true
@@ -66,7 +69,6 @@ dependencies {
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         jvmTarget = "11"
-        useIR = true
     }
 }
 
