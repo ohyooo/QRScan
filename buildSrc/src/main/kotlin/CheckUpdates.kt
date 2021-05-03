@@ -12,10 +12,6 @@ object CheckUpdate {
         Libs.implementations.forEach {
             parseDependencyToUrl(it)
         }
-
-        Libs.apis.forEach {
-            parseDependencyToUrl(it)
-        }
     }
 
     private fun parseDependencyToUrl(deps: String) {
@@ -31,7 +27,7 @@ object CheckUpdate {
             val w = vargs[i]
 
             when {
-                w.contains(".") -> w.split(".").forEach { s ->
+                i == 0 && w.contains(".") -> w.split(".").forEach { s ->
                     url.append(s).append("/")
                 }
                 else -> url.append(w).append("/")
