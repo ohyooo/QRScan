@@ -9,5 +9,5 @@ class ResultFragment : BaseFragment<FragmentResultBinding>() {
 
     private val vm by activityViewModels<ResultViewModel>()
 
-    override val vdb by lazy(LazyThreadSafetyMode.NONE) { FragmentResultBinding.inflate(layoutInflater).also { it.vm = vm } }
+    override val vdb by lazy(LazyThreadSafetyMode.NONE) { FragmentResultBinding.inflate(layoutInflater, container, false).also { it.vm = vm } }
 }

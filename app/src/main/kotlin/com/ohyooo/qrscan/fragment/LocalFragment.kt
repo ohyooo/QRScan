@@ -15,7 +15,7 @@ class LocalFragment : BaseFragment<FragmentLocalBinding>() {
 
     private val vm by activityViewModels<ResultViewModel>()
 
-    override val vdb by lazy(LazyThreadSafetyMode.NONE) { FragmentLocalBinding.inflate(layoutInflater) }
+    override val vdb by lazy(LazyThreadSafetyMode.NONE) { FragmentLocalBinding.inflate(layoutInflater, container, false) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
