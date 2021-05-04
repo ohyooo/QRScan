@@ -21,3 +21,8 @@
 #-renamesourcefileattribute SourceFile
 
 -keep class com.ohyooo.qrscan.Records { *; }
+
+-dontwarn androidx.databinding.**
+-keep class com.ohyooo.qrscan.databinding.** { *; }
+-keep class androidx.databinding.** { *; }
+-keep class * extends androidx.databinding.DataBinderMapper

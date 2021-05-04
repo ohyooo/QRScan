@@ -37,10 +37,10 @@ android {
     }
     buildTypes {
         debug {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
         }
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
         }
     }
     compileOptions {
@@ -53,6 +53,7 @@ android {
     buildFeatures {
         viewBinding = true
         dataBinding = true
+        mlModelBinding = true
     }
     lint {
         isCheckReleaseBuilds = false
