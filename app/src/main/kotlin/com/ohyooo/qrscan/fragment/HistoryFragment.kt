@@ -46,8 +46,9 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
     private fun initViews() {
         vdb.delete.setOnClickListener {
             vdb.delete.visibility = View.GONE
+            val size = histories.size
             histories.clear()
-            vdb.history.adapter?.notifyDataSetChanged()
+            vdb.history.adapter?.notifyItemRangeChanged(0, size)
             save()
         }
 
@@ -56,7 +57,7 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
                 histories.clear()
                 histories.addAll(it.recordList)
                 vdb.delete.visibility = if (histories.isEmpty()) View.GONE else View.VISIBLE
-                vdb.history.adapter?.notifyDataSetChanged()
+                vdb.history.adapter?.notifyItemRangeInserted(0, histories.size)
             }
         }
 
@@ -65,7 +66,7 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
                 val v = TextView(parent.context).apply {
                     setTextIsSelectable(true)
                     autoLinkMask = Linkify.ALL
-                    setPadding(0, 2.dp, 0, 2.dp)
+                    setPadding(0, 4.dp, 0, 4.dp)
                 }
                 return object : RecyclerView.ViewHolder(v) {}
             }
