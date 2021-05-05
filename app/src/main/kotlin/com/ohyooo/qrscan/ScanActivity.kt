@@ -1,10 +1,13 @@
 package com.ohyooo.qrscan
 
 import android.content.Intent
+import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.util.Size
 import android.view.Window
-import android.view.WindowManager
+import android.view.WindowInsets
+import android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -53,7 +56,13 @@ class ScanActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-        this.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+
+        if (SDK_INT >= Build.VERSION_CODES.R) {
+            window.insetsController?.hide(WindowInsets.Type.statusBars())
+        } else {
+            @Suppress("DEPRECATION")
+            window.setFlags(FLAG_FULLSCREEN, FLAG_FULLSCREEN)
+        }
 
         setContentView(vdb.root)
 
