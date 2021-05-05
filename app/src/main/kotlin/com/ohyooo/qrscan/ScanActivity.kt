@@ -1,13 +1,9 @@
 package com.ohyooo.qrscan
 
 import android.content.Intent
-import android.os.Build
-import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.util.Size
 import android.view.Window
-import android.view.WindowInsets
-import android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -21,6 +17,8 @@ import androidx.databinding.Observable
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HALF_EXPANDED
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.mlkit.vision.common.InputImage
 import com.ohyooo.qrscan.databinding.ActivityScanBinding
@@ -39,9 +37,28 @@ class ScanActivity : AppCompatActivity() {
 
     private val fragments = arrayOf(ResultFragment(), EditFragment(), LocalFragment(), HistoryFragment())
 
-    private val behavior by lazy(LazyThreadSafetyMode.NONE) { BottomSheetBehavior.from(vdb.bottomSheet) }
+    private val behavior by lazy(LazyThreadSafetyMode.NONE) {
+        BottomSheetBehavior.from(vdb.bottomSheet).apply {
+            halfExpandedRatio = 0.5F
+        }
+    }
 
-    private var manuallyControl = false
+    private var cameraProvider: ProcessCameraProvider? = null
+
+    private val cameraSelector by lazy(LazyThreadSafetyMode.NONE) {
+        CameraSelector.Builder()
+            .requireLensFacing(CameraSelector.LENS_FACING_BACK)
+            .build()
+    }
+
+    private val preview by lazy(LazyThreadSafetyMode.NONE) {
+        Preview.Builder()
+            .setTargetResolution(Size(vdb.previewView.width, vdb.previewView.height))
+            .build()
+            .apply {
+                setSurfaceProvider(vdb.previewView.surfaceProvider)
+            }
+    }
 
     private val cameraExecutor = Executors.newSingleThreadExecutor()
 
@@ -57,14 +74,14 @@ class ScanActivity : AppCompatActivity() {
 
         requestWindowFeature(Window.FEATURE_NO_TITLE)
 
-        if (SDK_INT >= Build.VERSION_CODES.R) {
-            window.insetsController?.hide(WindowInsets.Type.statusBars())
-        } else {
-            @Suppress("DEPRECATION")
-            window.setFlags(FLAG_FULLSCREEN, FLAG_FULLSCREEN)
-        }
-
         setContentView(vdb.root)
+
+        // if (SDK_INT >= Build.VERSION_CODES.R) {
+        //     window?.insetsController?.hide(WindowInsets.Type.statusBars())
+        // } else {
+        //     @Suppress("DEPRECATION")
+        //     window.setFlags(FLAG_FULLSCREEN, FLAG_FULLSCREEN)
+        // }
 
         initData()
         initViews()
@@ -133,32 +150,39 @@ class ScanActivity : AppCompatActivity() {
         TabLayoutMediator(vdb.tabLayout, vdb.viewPager) { tab, position ->
             tab.text = fragments[position].title
         }.attach()
+
+        // behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+        //     override fun onStateChanged(bottomSheet: View, newState: Int) {
+        //         when (newState) {
+        //             STATE_HALF_EXPANDED, STATE_EXPANDED -> {
+        //                 cameraProvider?.unbindAll()
+        //                 vdb.previewView.visibility = View.INVISIBLE
+        //             }
+        //             STATE_COLLAPSED -> {
+        //                 cameraProvider?.bindToLifecycle(this@ScanActivity, cameraSelector, preview, imageAnalysis)
+        //                 vdb.previewView.visibility = View.VISIBLE
+        //             }
+        //         }
+        //     }
+        //
+        //     override fun onSlide(bottomSheet: View, slideOffset: Float) {
+        //     }
+        // })
     }
 
     private fun cameraProvider() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
         cameraProviderFuture.addListener({
-            val cameraProvider = cameraProviderFuture.get()
-            startCamera(cameraProvider)
+            cameraProvider = cameraProviderFuture.get()
+            startCamera(cameraProvider!!)
         }, ContextCompat.getMainExecutor(this))
     }
 
     private fun startCamera(cameraProvider: ProcessCameraProvider) {
-        val cameraSelector = CameraSelector.Builder()
-            .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-            .build()
-
-        val preview = Preview.Builder()
-            .setTargetResolution(Size(vdb.previewView.width, vdb.previewView.height))
-            .build()
-            .apply {
-                setSurfaceProvider(vdb.previewView.surfaceProvider)
-            }
-
         enableScan()
 
         cameraProvider.unbindAll()
-        val camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis)
+        cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis)
     }
 
     private var lastTime = 0L
@@ -177,13 +201,9 @@ class ScanActivity : AppCompatActivity() {
         imageAnalysis.clearAnalyzer()
     }
 
-    private fun expandSheet() {
-        if (manuallyControl) {
-            return
-        }
-        manuallyControl = true
-        if (behavior.state != BottomSheetBehavior.STATE_HALF_EXPANDED || behavior.state != BottomSheetBehavior.STATE_EXPANDED) {
-            behavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+    private fun expandHalfSheet() {
+        if (behavior.state != STATE_HALF_EXPANDED || behavior.state != STATE_EXPANDED) {
+            behavior.state = STATE_HALF_EXPANDED
         }
     }
 
