@@ -53,6 +53,8 @@ object Libs {
         const val kotlin = "io.grpc:protoc-gen-grpc-kotlin:1.0.0"
     }
 
+    val plugins = listOf(Plugin.AGP, Plugin.KGP, Plugin.PGP)
+
     val apis = listOf(AndroidX.recyclerview)
 
     val implementations = listOf(
@@ -71,4 +73,10 @@ object Libs {
         Kotlin.stdlib,
         Protobuf.protobuf,
     )
+
+    val deps: List<String> = mutableListOf<String>().apply {
+        addAll(plugins)
+        addAll(apis)
+        addAll(implementations)
+    }
 }

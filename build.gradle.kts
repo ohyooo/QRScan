@@ -27,10 +27,10 @@ val GOOGLE_URL = "https://dl.google.com/dl/android/maven2/"
 val latestRegex = "(?<=<latest>)(.*\\n?)(?=</latest>)".toRegex()
 
 tasks.register("update", Delete::class) {
-    Libs.implementations.forEach { deps ->
-        val vargs = deps.split(":")
+    Libs.deps.forEach { dep ->
+        val vargs = dep.split(":")
 
-        val url = if (deps.contains("androidx") || deps.contains("google")) {
+        val url = if (dep.contains("androidx") || dep.contains("google")) {
             StringBuffer(GOOGLE_URL)
         } else {
             StringBuffer(MAVEN_CENTRAL_URL)
@@ -61,12 +61,12 @@ tasks.register("update", Delete::class) {
         val latestVersion = latestRegex.find(xml)?.value
 
         if (latestVersion == null) {
-            println("latest version=$latestVersion")
+            println("eeeee latest version=$latestVersion")
             return@forEach
         }
 
         if (latestVersion != vargs.last()) {
-            println("eeeeeeeeeeeeeeeeee $deps has update for $latestVersion $url")
+            println("eeeee $dep has update for $latestVersion $url")
         }
     }
 }
