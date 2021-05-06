@@ -30,7 +30,7 @@ tasks.register("update", Delete::class) {
     Libs.deps.forEach { dep ->
         val vargs = dep.split(":")
 
-        val url = if (dep.contains("androidx") || dep.contains("google")) {
+        val url = if (dep.contains("androidx") || dep.contains("google") || dep.contains("com.android.tools.build:gradle")) {
             StringBuffer(GOOGLE_URL)
         } else {
             StringBuffer(MAVEN_CENTRAL_URL)
