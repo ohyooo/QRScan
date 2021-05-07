@@ -49,14 +49,14 @@ tasks.register("update", Delete::class) {
         url.append("maven-metadata.xml")
 
         val xml = try {
-            java.net.URL(url.toString())
+            java.net.URL(url.toString()).readText()
         } catch (e: Exception) {
             if (url.contains(GOOGLE_URL)) {
                 java.net.URL(url.toString().replace(GOOGLE_URL, MAVEN_CENTRAL_URL))
             } else {
                 java.net.URL(url.toString().replace(MAVEN_CENTRAL_URL, GOOGLE_URL))
-            }
-        }.readText()
+            }.readText()
+        }
 
         val latestVersion = latestRegex.find(xml)?.value
 
