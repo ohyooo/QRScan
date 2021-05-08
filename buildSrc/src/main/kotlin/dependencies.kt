@@ -24,7 +24,7 @@ object Libs {
     }
 
     object Google {
-        const val material = "com.google.android.material:material:1.4.0-alpha02"
+        const val material = "com.google.android.material:material:1.4.0-beta01"
         const val barcode = "com.google.mlkit:barcode-scanning:16.1.1"
     }
 

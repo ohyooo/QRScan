@@ -21,7 +21,7 @@ tasks.register("clean", Delete::class) {
     delete(rootProject.buildDir)
 }
 
-val MAVEN_CENTRAL_URL = "https://repo.maven.apache.org/maven2/"
+val MAVEN_CENTRAL_URL = "https://repo1.maven.org/maven2/"
 val GOOGLE_URL = "https://dl.google.com/dl/android/maven2/"
 
 val latestRegex = "(?<=<latest>)(.*\\n?)(?=</latest>)".toRegex()
