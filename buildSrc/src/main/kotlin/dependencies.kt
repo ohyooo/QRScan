@@ -1,4 +1,4 @@
-private const val kotlin_version = "1.5.0"
+private const val kotlin_version = "1.5.10"
 
 object Ext {
     const val applicationId = "com.ohyooo.qrscan"
