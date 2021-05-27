@@ -19,9 +19,11 @@ allprojects {
     }
 }
 
-tasks.register("clean", Delete::class) {
+tasks.register<Delete>("clean") {
     delete(rootProject.buildDir)
 }
+
+tasks.register<UpdateTask>("update")
 
 abstract class UpdateTask : DefaultTask() {
     private val MAVEN_CENTRAL_URL = "https://repo1.maven.org/maven2/"
@@ -124,17 +126,3 @@ abstract class UpdateTask : DefaultTask() {
         }
     }
 }
-
-tasks.register<UpdateTask>("update")
-
-
-
-abstract class GreetingTask : DefaultTask() {
-    @TaskAction
-    fun greet() {
-        println("hello from GreetingTask")
-    }
-}
-
-// Create a task using the task type
-tasks.register<GreetingTask>("hello")
