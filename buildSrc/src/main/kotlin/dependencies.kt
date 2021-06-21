@@ -13,7 +13,7 @@ object Ext {
 object Libs {
 
     object Plugin {
-        const val AGP = "com.android.tools.build:gradle:7.1.0-alpha01"
+        const val AGP = "com.android.tools.build:gradle:7.1.0-alpha02"
         const val KGP = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         const val PGP = "com.google.protobuf:protobuf-gradle-plugin:0.8.16"
     }
@@ -30,11 +30,11 @@ object Libs {
 
     object AndroidX {
         const val appcompat = "androidx.appcompat:appcompat:1.4.0-alpha01"
-        const val coreKtx = "androidx.core:core-ktx:1.6.0-beta01"
-        const val fragmentKtx = "androidx.fragment:fragment-ktx:1.4.0-alpha01"
+        const val coreKtx = "androidx.core:core-ktx:1.6.0-rc01"
+        const val fragmentKtx = "androidx.fragment:fragment-ktx:1.4.0-alpha03"
         const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.1.0-beta02"
         const val recyclerview = "androidx.recyclerview:recyclerview:1.2.1"
-        const val datastore = "androidx.datastore:datastore:1.0.0-beta01"
+        const val datastore = "androidx.datastore:datastore:1.0.0-beta02"
         const val lifecycle = "androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0-alpha01"
     }
 
