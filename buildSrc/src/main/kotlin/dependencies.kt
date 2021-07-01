@@ -42,7 +42,7 @@ object Libs {
         private const val camerax_version = "1.1.0-alpha04"
         const val camera2 = "androidx.camera:camera-camera2:${camerax_version}"
         const val lifecycle = "androidx.camera:camera-lifecycle:${camerax_version}"
-        const val view = "androidx.camera:camera-view:1.0.0-alpha24"
+        const val view = "androidx.camera:camera-view:1.0.0-alpha26"
     }
 
     object Protobuf {
