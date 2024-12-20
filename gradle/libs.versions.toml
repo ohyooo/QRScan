@@ -14,8 +14,8 @@ serialization = "1.7.3"
 compose_compiler_version="1.5.15"
 
 accompanist = "0.36.0"
-compose = "1.7.5"
-camerax = "1.5.0-alpha03"
+compose = "1.7.6"
+camerax = "1.5.0-alpha04"
 
 
 [plugins]
@@ -27,14 +27,14 @@ cc = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 [libraries]
 # kotlin
 # https://github.com/Kotlin/kotlinx.coroutines/releases
-coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0"
+coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.0"
 # https://github.com/Kotlin/kotlinx.serialization/releases
 json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 
 
 # Kotlin
-kotlinx_coroutines-android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0"
-kotlinx_coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0"
+kotlinx_coroutines-android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.0"
+kotlinx_coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.0"
 kotlinx_serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3"
 
 # Google
@@ -50,7 +50,7 @@ activity_compose = "androidx.activity:activity-compose:1.9.3"
 fragment_ktx = "androidx.fragment:fragment-ktx:1.8.5"
 lifecycle_viewmodel-compose = "androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7"
 profileinstaller = "androidx.profileinstaller:profileinstaller:1.4.1"
-navigation_compose = "androidx.navigation:navigation-compose:2.8.4"
+navigation_compose = "androidx.navigation:navigation-compose:2.8.5"
 
 # Compose
 compose_compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compose_compiler_version" }
