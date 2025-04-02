@@ -9,7 +9,7 @@ version_name = "2.10"
 agp = "8.9.1"
 kotlin = "2.1.20"
 workmanager = "2.8.1"
-serialization = "1.8.0"
+serialization = "1.8.1"
 
 compose_compiler_version="1.5.15"
 
@@ -35,7 +35,7 @@ json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.re
 # Kotlin
 kotlinx_coroutines-android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.1"
 kotlinx_coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1"
-kotlinx_serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0"
+kotlinx_serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1"
 
 # Google
 google_material = "com.google.android.material:material:1.12.0"
