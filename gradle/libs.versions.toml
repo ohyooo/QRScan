@@ -6,7 +6,7 @@ compile_sdk = "35"
 version_code = "10"
 version_name = "2.10"
 
-agp = "8.11.1"
+agp = "8.12.0"
 kotlin = "2.2.0"
 workmanager = "2.8.1"
 serialization = "1.9.0"
@@ -50,7 +50,7 @@ activity_compose = "androidx.activity:activity-compose:1.10.1"
 fragment_ktx = "androidx.fragment:fragment-ktx:1.8.8"
 lifecycle_viewmodel-compose = "androidx.lifecycle:lifecycle-viewmodel-compose:2.9.2"
 profileinstaller = "androidx.profileinstaller:profileinstaller:1.4.1"
-navigation_compose = "androidx.navigation:navigation-compose:2.9.2"
+navigation_compose = "androidx.navigation:navigation-compose:2.9.3"
 
 # Compose
 compose_compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compose_compiler_version" }
