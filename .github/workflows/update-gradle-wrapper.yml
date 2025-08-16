@@ -22,3 +22,6 @@ jobs:
 
       - name: Update Gradle Wrapper
         uses: gradle-update/update-gradle-wrapper-action@main
+        with:
+          repo-token: ${{ secrets.ACTIONS_TRIGGER_PAT }}
+          merge-method: SQUASH
