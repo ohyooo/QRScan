@@ -25,3 +25,4 @@ jobs:
         with:
           repo-token: ${{ secrets.ACTIONS_TRIGGER_PAT }}
           merge-method: SQUASH
+          commit-message-template: 'Update Gradle Wrapper from %sourceVersion% to %targetVersion%. skip-checks: true'
