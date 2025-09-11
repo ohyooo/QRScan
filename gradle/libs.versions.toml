@@ -14,8 +14,8 @@ serialization = "1.9.0"
 compose_compiler_version="1.5.15"
 
 accompanist = "0.36.0"
-compose = "1.9.0"
-camerax = "1.5.0-rc01"
+compose = "1.9.1"
+camerax = "1.5.0"
 
 
 [plugins]
@@ -46,11 +46,11 @@ accompanist_pager-indicators = { module = "com.google.accompanist:accompanist-pa
 # AndroidX
 androidx_core-ktx = "androidx.core:core-ktx:1.17.0"
 datastore_preferences = "androidx.datastore:datastore-preferences:1.1.7"
-activity_compose = "androidx.activity:activity-compose:1.10.1"
+activity_compose = "androidx.activity:activity-compose:1.11.0"
 fragment_ktx = "androidx.fragment:fragment-ktx:1.8.9"
 lifecycle_viewmodel-compose = "androidx.lifecycle:lifecycle-viewmodel-compose:2.9.3"
 profileinstaller = "androidx.profileinstaller:profileinstaller:1.4.1"
-navigation_compose = "androidx.navigation:navigation-compose:2.9.3"
+navigation_compose = "androidx.navigation:navigation-compose:2.9.4"
 
 # Compose
 compose_compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compose_compiler_version" }
