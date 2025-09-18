@@ -48,7 +48,7 @@ androidx_core-ktx = "androidx.core:core-ktx:1.17.0"
 datastore_preferences = "androidx.datastore:datastore-preferences:1.1.7"
 activity_compose = "androidx.activity:activity-compose:1.11.0"
 fragment_ktx = "androidx.fragment:fragment-ktx:1.8.9"
-lifecycle_viewmodel-compose = "androidx.lifecycle:lifecycle-viewmodel-compose:2.9.3"
+lifecycle_viewmodel-compose = "androidx.lifecycle:lifecycle-viewmodel-compose:2.9.4"
 profileinstaller = "androidx.profileinstaller:profileinstaller:1.4.1"
 navigation_compose = "androidx.navigation:navigation-compose:2.9.4"
 
