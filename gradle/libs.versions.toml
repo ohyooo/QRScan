@@ -7,14 +7,14 @@ version_code = "10"
 version_name = "2.10"
 
 agp = "8.13.0"
-kotlin = "2.2.20"
+kotlin = "2.2.21"
 workmanager = "2.8.1"
 serialization = "1.9.0"
 
 compose_compiler_version="1.5.15"
 
 accompanist = "0.36.0"
-compose = "1.9.3"
+compose = "1.9.4"
 camerax = "1.5.1"
 
 
