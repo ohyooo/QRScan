@@ -6,7 +6,7 @@ compile_sdk = "36"
 version_code = "10"
 version_name = "2.10"
 
-agp = "8.13.1"
+agp = "8.13.2"
 kotlin = "2.2.21"
 workmanager = "2.8.1"
 serialization = "1.9.0"
