@@ -38,20 +38,20 @@ jobs:
       - name: Build APK
         run: ./gradlew :app:assembleRelease
 
-      - name: Generate release tag
-        id: tag
-        run: |
-          echo "::set-output name=release_tag::$(date +"%Y.%m.%d_%H-%M")"
-
-      - name: Upload to release
-        uses: svenstaro/upload-release-action@master
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: app/build/outputs/apk/release/*.apk
-          asset_name: ${{ steps.tag.outputs.release_tag }}
-          tag: ${{ github.ref }}_${{ steps.time.outputs.time }}
-          overwrite: true
-          file_glob: true
+      #      - name: Generate release tag
+      #        id: tag
+      #        run: |
+      #          echo "::set-output name=release_tag::$(date +"%Y.%m.%d_%H-%M")"
+      #
+      #      - name: Upload to release
+      #        uses: svenstaro/upload-release-action@master
+      #        with:
+      #          repo_token: ${{ secrets.GITHUB_TOKEN }}
+      #          file: app/build/outputs/apk/release/*.apk
+      #          asset_name: ${{ steps.tag.outputs.release_tag }}
+      #          tag: ${{ github.ref }}_${{ steps.time.outputs.time }}
+      #          overwrite: true
+      #          file_glob: true
 
       - name: Remove old Releases
         uses: dev-drprasad/delete-older-releases@master

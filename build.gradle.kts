@@ -17,7 +17,7 @@ allprojects {
             jvmTarget.set(JvmTarget.JVM_21)
             freeCompilerArgs.addAll(
                 listOf(
-                    "-Xcontext-receivers", "-jvm-target=21"
+                    "-jvm-target=21"
                 )
             )
         }

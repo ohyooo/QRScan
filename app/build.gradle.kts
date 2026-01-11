@@ -41,23 +41,6 @@ android {
             signingConfig = signingConfigs.getByName("debug")
             matchingFallbacks += listOf("release")
             isDebuggable = false
-
-            // https://developer.android.com/topic/performance/baselineprofiles/create-baselineprofile
-            // Benchmark builds should not be obfuscated.
-            postprocessing {
-                isRemoveUnusedCode = true
-                isRemoveUnusedResources = true
-                isObfuscate = false
-                isOptimizeCode = true
-            }
-        }
-    }
-    splits {
-        abi {
-            isEnable = true
-            reset()
-            include("x86", "armeabi-v7a", "arm64-v8a", "x86_64")
-            isUniversalApk = true
         }
     }
     compileOptions {
@@ -72,9 +55,6 @@ android {
         renderScript = false
         resValues = false
         shaders = false
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.version.get()
     }
 }
 

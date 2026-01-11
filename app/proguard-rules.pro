@@ -65,3 +65,7 @@
 -dontwarn org.jetbrains.kotlin.diagnostics.rendering.SmartDescriptorRenderer
 -dontwarn org.jetbrains.kotlin.diagnostics.rendering.SmartTypeRenderer
 -dontwarn org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+-dontwarn androidx.window.extensions.area.ExtensionWindowAreaPresentation
+-dontwarn androidx.window.extensions.core.util.function.Consumer
+-dontwarn androidx.window.extensions.core.util.function.Function
+-dontwarn androidx.window.extensions.core.util.function.Predicate
