@@ -12,7 +12,7 @@ workmanager = "2.8.1"
 serialization = "1.9.0"
 
 accompanist = "0.36.0"
-compose = "1.10.0"
+compose = "1.10.1"
 camerax = "1.5.2"
 
 
