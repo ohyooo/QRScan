@@ -1,7 +1,6 @@
 plugins {
-    id("com.android.application")
-    kotlin("android")
-    id("kotlinx-serialization")
+    alias(libs.plugins.agp)
+    alias(libs.plugins.ks)
     alias(libs.plugins.cc)
 }
 
@@ -17,14 +16,14 @@ android {
             enableV4Signing = true
         }
     }
-    namespace = libs.versions.application.id.get()
+    namespace = "com.ohyooo.qrscan"
 	compileSdk = libs.versions.compile.sdk.get().toInt()
     defaultConfig {
-        applicationId = libs.versions.application.id.get()
+        applicationId = "com.ohyooo.qrscan"
         minSdk = libs.versions.min.sdk.get().toInt()
         targetSdk = libs.versions.target.sdk.get().toInt()
-        versionCode = libs.versions.version.code.get().toInt()
-        versionName = libs.versions.target.sdk.get() + rootProject.extra["gitVersion"]
+        versionCode = 10
+        versionName = "2.10" + rootProject.extra["gitVersion"]
         proguardFile("proguard-rules.pro")
         signingConfig = signingConfigs.getByName("debug")
     }
@@ -52,12 +51,34 @@ android {
         // Disable unused AGP features
         buildConfig = false
         aidl = false
-        renderScript = false
         resValues = false
         shaders = false
     }
 }
 
 dependencies {
-    implementation(libs.bundles.all)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.google.material)
+    implementation(libs.google.barcode)
+    implementation(libs.google.accompanist.pager)
+    implementation(libs.google.accompanist.pager.indicators)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.kotlinx.serialization)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.androidx.profileinstaller)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.compose.foundation)
+    implementation(libs.compose.material)
+    implementation(libs.compose.material.icons.extended)
+    implementation(libs.compose.runtime)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.ui.tooling)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
 }
