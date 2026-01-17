@@ -1,26 +1,40 @@
 package com.ohyooo.qrscan.compose
 
+import android.app.Application
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.*
+import androidx.compose.material.BottomSheetScaffold
+import androidx.compose.material.BottomSheetState
+import androidx.compose.material.BottomSheetValue
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.Tab
+import androidx.compose.material.TabPosition
+import androidx.compose.material.TabRow
+import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.*
+import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.FileOpen
+import androidx.compose.material.icons.rounded.History
+import androidx.compose.material.icons.rounded.Receipt
+import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ohyooo.qrscan.ScanViewModel
 import kotlinx.coroutines.launch
 
@@ -32,10 +46,9 @@ private val Setting = Icons.Rounded.Settings
 
 private val tabList = listOf(Result, Edit, Local, History, Setting)
 
-@Preview
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MainUI(vm: ScanViewModel = viewModel()) {
+fun MainUI(vm: ScanViewModel) {
 
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = BottomSheetState(initialValue = BottomSheetValue.Collapsed, density = LocalDensity.current)
@@ -50,6 +63,14 @@ fun MainUI(vm: ScanViewModel = viewModel()) {
     ) {
         CameraUI(vm)
     }
+}
+
+@Preview
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun MainUIPreview() {
+    val app = LocalContext.current.applicationContext as Application
+    MainUI(vm = ScanViewModel(app))
 }
 
 @Composable

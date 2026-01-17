@@ -11,12 +11,12 @@ import android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
 import android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import com.ohyooo.qrscan.compose.MainUI
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ScanActivity : ComponentActivity() {
 
-    private val vm by viewModels<ScanViewModel>()
+    private val vm by viewModel<ScanViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +28,7 @@ class ScanActivity : ComponentActivity() {
         makeStatusBarTransparent()
 
         setContent {
-            MainUI()
+            MainUI(vm = vm)
         }
     }
 
