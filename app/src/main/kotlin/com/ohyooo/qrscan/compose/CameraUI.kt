@@ -6,9 +6,9 @@ import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
-import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.core.resolutionselector.AspectRatioStrategy
 import androidx.camera.core.resolutionselector.ResolutionSelector
+import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -61,14 +61,7 @@ private fun initCamera(context: Context, lifecycleOwner: LifecycleOwner, vm: Sca
 
     val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
     cameraProviderFuture.addListener({
-        var lastTime = 0L
-        imageAnalysis.setAnalyzer(Executors.newSingleThreadExecutor(), QrCodeAnalyzer { r ->
-            val now = System.currentTimeMillis()
-            if (now - lastTime > 2000) {
-                lastTime = now
-                vm.result.value = r
-            }
-        })
+        imageAnalysis.setAnalyzer(Executors.newSingleThreadExecutor(), QrCodeAnalyzer(vm.qrCallback))
 
         coroutineScope.launch {
             val cameraProvider = context.getCameraProvider()

@@ -12,10 +12,22 @@ import com.google.mlkit.vision.common.InputImage
 import com.ohyooo.qrscan.util.addHistory
 import com.ohyooo.qrscan.util.barcodeClient
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class ScanViewModel(context: Application) : AndroidViewModel(context) {
-    val result = MutableStateFlow("")
+    val result: StateFlow<String>
+        field = MutableStateFlow("")
+
+    private var lastTime = 0L
+
+    val qrCallback: (qrCode: String) -> Unit = { r ->
+        val now = System.currentTimeMillis()
+        if (now - lastTime > 2000) {
+            lastTime = now
+            result.value = r
+        }
+    }
 
     private val Uri.task: Task<List<Barcode>>
         get() = barcodeClient.process(InputImage.fromFilePath(getApplication(), this))
