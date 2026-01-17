@@ -31,7 +31,9 @@ private fun UI(update: State<String>, text: String) {
             modifier = Modifier.fillMaxSize(),
             factory = { context ->
                 TextView(context).apply {
-                    autoLinkMask = Linkify.ALL
+                    autoLinkMask = Linkify.WEB_URLS or
+                        Linkify.EMAIL_ADDRESSES or
+                        Linkify.PHONE_NUMBERS
                     setTextIsSelectable(true)
                     setText(text)
                 }

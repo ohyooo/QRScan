@@ -1,15 +1,22 @@
 package com.ohyooo.qrscan.compose
 
 import android.app.Application
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.BottomSheetScaffold
-import androidx.compose.material.BottomSheetState
-import androidx.compose.material.BottomSheetValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.Tab
@@ -22,12 +29,15 @@ import androidx.compose.material.icons.rounded.FileOpen
 import androidx.compose.material.icons.rounded.History
 import androidx.compose.material.icons.rounded.Receipt
 import androidx.compose.material.icons.rounded.Settings
-import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -37,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import com.ohyooo.qrscan.ScanViewModel
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 private val Result = Icons.Rounded.Receipt
 private val Edit = Icons.Rounded.Edit
@@ -50,18 +61,37 @@ private val tabList = listOf(Result, Edit, Local, History, Setting)
 @Composable
 fun MainUI(vm: ScanViewModel) {
 
-    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = BottomSheetState(initialValue = BottomSheetValue.Collapsed, density = LocalDensity.current)
-    )
-    BottomSheetScaffold(
-        scaffoldState = bottomSheetScaffoldState,
-        sheetContent = {
-            Home(vm = vm)
-        },
-        sheetPeekHeight = 100.dp,
-        modifier = Modifier.fillMaxSize(),
-    ) {
+    val density = LocalDensity.current
+    val peekHeight = 100.dp
+
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val maxHeightPx = with(density) { maxHeight.toPx() }
+        val peekHeightPx = with(density) { peekHeight.toPx() }
+        val maxOffsetPx = (maxHeightPx - peekHeightPx).coerceAtLeast(0f)
+        val offsetY = remember(maxOffsetPx) { mutableFloatStateOf(maxOffsetPx) }
+
         CameraUI(vm)
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(maxHeight)
+                .offset { IntOffset(0, offsetY.floatValue.roundToInt()) }
+                .draggable(
+                    orientation = Orientation.Vertical,
+                    state = rememberDraggableState { delta ->
+                        val next = offsetY.floatValue + delta
+                        offsetY.floatValue = next.coerceIn(0f, maxOffsetPx)
+                    }
+                )
+        ) {
+            Home(
+                vm = vm,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .statusBarsPadding()
+            )
+        }
     }
 }
 
@@ -74,8 +104,8 @@ private fun MainUIPreview() {
 }
 
 @Composable
-fun Home(vm: ScanViewModel) {
-    Column {
+fun Home(vm: ScanViewModel, modifier: Modifier = Modifier) {
+    Column(modifier = modifier) {
         val pagerState = rememberPagerState { tabList.size }
 
         LaunchedEffect(Unit) {
@@ -88,7 +118,7 @@ fun Home(vm: ScanViewModel) {
 
         Tab(pagerState)
 
-        HorizontalPager(state = pagerState, modifier = Modifier.weight(1F)) { index ->
+        HorizontalPager(state = pagerState, modifier = Modifier.weight(1F).background(Color.White)) { index ->
             Column(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,

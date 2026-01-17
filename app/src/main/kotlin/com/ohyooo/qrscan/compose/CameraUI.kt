@@ -1,11 +1,14 @@
 package com.ohyooo.qrscan.compose
 
 import android.content.Context
-import android.util.Size
+import android.view.Surface
+import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.core.resolutionselector.AspectRatioStrategy
+import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -39,12 +42,20 @@ fun CameraUI(vm: ScanViewModel) {
 
 //https://www.devbitsandbytes.com/configuring-camerax-in-jetpack-compose-to-take-picture/
 private fun initCamera(context: Context, lifecycleOwner: LifecycleOwner, vm: ScanViewModel, view: PreviewView, coroutineScope: CoroutineScope) {
-    val size = Size(view.width, view.height)
-
     val cameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
+    val rotation = view.display?.rotation ?: Surface.ROTATION_0
+    val resolutionSelector = ResolutionSelector.Builder()
+        .setAspectRatioStrategy(
+            AspectRatioStrategy(
+                AspectRatio.RATIO_16_9,
+                AspectRatioStrategy.FALLBACK_RULE_AUTO
+            )
+        )
+        .build()
 
     val imageAnalysis = ImageAnalysis.Builder()
-        .setTargetResolution(size)
+        .setResolutionSelector(resolutionSelector)
+        .setTargetRotation(rotation)
         .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
         .build()
 
@@ -66,7 +77,8 @@ private fun initCamera(context: Context, lifecycleOwner: LifecycleOwner, vm: Sca
                 lifecycleOwner,
                 cameraSelector,
                 Preview.Builder()
-                    .setTargetResolution(size)
+                    .setResolutionSelector(resolutionSelector)
+                    .setTargetRotation(rotation)
                     .build()
                     .apply {
                         surfaceProvider = view.surfaceProvider
