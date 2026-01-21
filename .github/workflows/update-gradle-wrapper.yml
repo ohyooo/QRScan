@@ -55,5 +55,5 @@ jobs:
         with:
           github_token: ${{ secrets.ACTIONS_TRIGGER_PAT }}
           parent_repository: 'ohyooo/Shared-Gradle'
-          checkout_branch: 'master'
-          pr_against_branch: 'master'
+          checkout_branch: 'main'
+          pr_against_branch: 'main'
