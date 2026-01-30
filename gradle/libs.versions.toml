@@ -6,12 +6,12 @@ compile-sdk = "36"
 agp = "9.0.0"
 kotlin = "2.3.0"
 workmanager = "2.8.1"
-serialization = "1.9.0"
+serialization = "1.10.0"
 koin = "4.1.1"
 
 accompanist = "0.36.0"
-compose = "1.10.1"
-camerax = "1.5.2"
+compose = "1.10.2"
+camerax = "1.5.3"
 
 
 [plugins]
@@ -19,15 +19,15 @@ agp = { id = "com.android.application", version.ref = "agp" }
 alp = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 ks = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kmm = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-jc = { id = "org.jetbrains.compose", version = "1.11.0-alpha01" }
+jc = { id = "org.jetbrains.compose", version = "1.11.0-alpha02" }
 cc = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
 [libraries]
 # kotlin
 # https://github.com/Kotlin/kotlinx.serialization/releases
-kotlinx-serialization-core = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.9.0"
+kotlinx-serialization-core = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.10.0"
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
-kotlinx-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.7.1"
+kotlinx-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.7.1-0.6.x-compat"
 
 # https://github.com/Kotlin/kotlinx.coroutines/releases
 kotlinx-coroutines-android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2"
@@ -45,11 +45,11 @@ google-accompanist-pager-indicators = { module = "com.google.accompanist:accompa
 # AndroidX
 androidx-core-ktx = "androidx.core:core-ktx:1.17.0"
 androidx-datastore-preferences = "androidx.datastore:datastore-preferences:1.2.0"
-androidx-activity-compose = "androidx.activity:activity-compose:1.12.2"
+androidx-activity-compose = "androidx.activity:activity-compose:1.12.3"
 androidx-fragment-ktx = "androidx.fragment:fragment-ktx:1.8.9"
 androidx-lifecycle-viewmodel-compose = "androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0"
 androidx-profileinstaller = "androidx.profileinstaller:profileinstaller:1.4.1"
-androidx-navigation-compose = "androidx.navigation:navigation-compose:2.9.6"
+androidx-navigation-compose = "androidx.navigation:navigation-compose:2.9.7"
 androidx-startup-runtime = "androidx.startup:startup-runtime:1.2.0"
 
 # Camera
