@@ -17,7 +17,12 @@ android {
         }
     }
     namespace = "com.ohyooo.qrscan"
-	compileSdk = libs.versions.compile.sdk.get().toInt()
+
+    compileSdk {
+        version = release(libs.versions.compile.sdk.get().toInt()) {
+            minorApiLevel = libs.versions.compile.minor.get().toInt()
+        }
+    }
     defaultConfig {
         applicationId = "com.ohyooo.qrscan"
         minSdk = libs.versions.min.sdk.get().toInt()
