@@ -5,7 +5,7 @@ compile-sdk = "36"
 compile-minor = "1"
 
 agp = "9.0.0"
-kotlin = "2.3.0"
+kotlin = "2.3.10"
 workmanager = "2.8.1"
 serialization = "1.10.0"
 koin = "4.1.1"
