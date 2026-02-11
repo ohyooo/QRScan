@@ -16,7 +16,11 @@ allprojects {
             jvmTarget.set(JvmTarget.JVM_21)
             freeCompilerArgs.addAll(
                 listOf(
-                    "-jvm-target=21", "-Xreturn-value-checker=full", "-Xexplicit-backing-fields"
+                    "-Xbackend-threads=4",
+                    "-Xcontext-parameters", 
+                    "-jvm-target=21",
+                    "-Xreturn-value-checker=full",
+                    "-Xexplicit-backing-fields",
                 )
             )
         }
