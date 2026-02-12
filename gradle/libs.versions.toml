@@ -11,7 +11,7 @@ serialization = "1.10.0"
 koin = "4.1.1"
 
 accompanist = "0.36.0"
-compose = "1.10.2"
+compose = "1.10.3"
 camerax = "1.5.3"
 
 
@@ -46,7 +46,7 @@ google-accompanist-pager-indicators = { module = "com.google.accompanist:accompa
 # AndroidX
 androidx-core-ktx = "androidx.core:core-ktx:1.17.0"
 androidx-datastore-preferences = "androidx.datastore:datastore-preferences:1.2.0"
-androidx-activity-compose = "androidx.activity:activity-compose:1.12.3"
+androidx-activity-compose = "androidx.activity:activity-compose:1.12.4"
 androidx-fragment-ktx = "androidx.fragment:fragment-ktx:1.8.9"
 androidx-lifecycle-viewmodel-compose = "androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0"
 androidx-profileinstaller = "androidx.profileinstaller:profileinstaller:1.4.1"
