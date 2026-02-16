@@ -4,7 +4,7 @@ target-sdk = "36"
 compile-sdk = "36"
 compile-minor = "1"
 
-agp = "9.0.0"
+agp = "9.0.1"
 kotlin = "2.3.10"
 workmanager = "2.8.1"
 serialization = "1.10.0"
