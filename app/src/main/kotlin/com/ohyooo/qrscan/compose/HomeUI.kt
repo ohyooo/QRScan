@@ -62,7 +62,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.ohyooo.qrscan.R
-import com.ohyooo.qrscan.ScanUiState
 import com.ohyooo.qrscan.ScanViewModel
 import com.ohyooo.qrscan.compose.theme.QRScanTheme
 import com.ohyooo.qrscan.compose.theme.heroGradientBottom
@@ -86,12 +85,15 @@ fun MainUI(
     onRequestCameraPermission: () -> Unit
 ) {
     val uiState by vm.uiState.collectAsState()
+    val currentResult = uiState.currentResult
+    val editableResult = uiState.editableResult
+    val history = uiState.history
+    val isImportingImage = uiState.isImportingImage
     val pagerState = rememberPagerState { HomeTab.entries.size }
     val scaffoldState = rememberScaffoldState()
-    val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(uiState.currentResult) {
-        if (uiState.currentResult.isNotBlank() && pagerState.currentPage != HomeTab.Result.ordinal) {
+    LaunchedEffect(currentResult) {
+        if (currentResult.isNotBlank() && pagerState.currentPage != HomeTab.Result.ordinal) {
             pagerState.scrollToPage(HomeTab.Result.ordinal)
         }
     }
@@ -119,104 +121,151 @@ fun MainUI(
                     )
                 )
         ) {
-            val density = LocalDensity.current
             val containerHeight = maxHeight
-            val sheetPeekHeight = 76.dp
-            val sheetExpandedTop = 104.dp
-            val maxHeightPx = constraints.maxHeight.toFloat()
-            val peekHeightPx = with(density) { sheetPeekHeight.toPx() }
-            val expandedTopPx = with(density) { sheetExpandedTop.toPx() }
-            val collapsedOffsetPx = (maxHeightPx - peekHeightPx).coerceAtLeast(expandedTopPx)
-            val sheetOffsetPx = remember(collapsedOffsetPx) { mutableFloatStateOf(collapsedOffsetPx) }
-            val expansionProgress = ((collapsedOffsetPx - sheetOffsetPx.floatValue) /
-                    (collapsedOffsetPx - expandedTopPx).coerceAtLeast(1f)).coerceIn(0f, 1f)
 
             Box(modifier = Modifier.fillMaxSize()) {
                 HeroCameraLayer(
-                    uiState = uiState,
+                    hasResult = currentResult.isNotBlank(),
                     hasCameraPermission = hasCameraPermission,
                     onRequestCameraPermission = onRequestCameraPermission,
-                    onQrDetected = vm.qrCallback,
-                    expansionProgress = expansionProgress
+                    onQrDetected = vm.qrCallback
                 )
 
-                Surface(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(containerHeight)
-                        .offset { IntOffset(0, sheetOffsetPx.floatValue.roundToInt()) }
-                        .draggable(
-                            orientation = Orientation.Vertical,
-                            state = rememberDraggableState { delta ->
-                                val next = sheetOffsetPx.floatValue + delta
-                                sheetOffsetPx.floatValue = next.coerceIn(expandedTopPx, collapsedOffsetPx)
-                            },
-                            onDragStopped = {
-                                val midpoint = (expandedTopPx + collapsedOffsetPx) / 2f
-                                val target = if (sheetOffsetPx.floatValue < midpoint) {
-                                    expandedTopPx
-                                } else {
-                                    collapsedOffsetPx
-                                }
-                                coroutineScope.launch {
-                                    sheetOffsetPx.floatValue = target
-                                }
-                            }
-                        ),
-                    shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
-                    color = MaterialTheme.colors.surface,
-                    elevation = 12.dp
-                ) {
-                    Column(modifier = Modifier.fillMaxSize()) {
-                        SheetHandle()
-                        HomeTabBar(
-                            selectedIndex = pagerState.currentPage,
-                            onTabSelected = { index ->
-                                coroutineScope.launch {
-                                    pagerState.scrollToPage(index)
-                                    sheetOffsetPx.floatValue = expandedTopPx
-                                }
-                            }
-                        )
-
-                        HorizontalPager(
-                            state = pagerState,
-                            modifier = Modifier.fillMaxSize()
-                        ) { index ->
-                            when (HomeTab.entries[index]) {
-                                HomeTab.Result -> ResultUI(
-                                    result = uiState.currentResult,
-                                    onCommitEditedResult = vm::commitEditableResult,
-                                    onClearResult = vm::clearCurrentResult
-                                )
-
-                                HomeTab.Edit -> EditUI(
-                                    text = uiState.editableResult,
-                                    onTextChange = vm::updateEditableResult,
-                                    onApply = vm::commitEditableResult
-                                )
-
-                                HomeTab.Import -> LocalUI(
-                                    isImporting = uiState.isImportingImage,
-                                    onImport = vm::handleUri
-                                )
-
-                                HomeTab.History -> HistoryUI(
-                                    history = uiState.history,
-                                    onSelect = vm::selectHistoryItem
-                                )
-
-                                HomeTab.Settings -> SettingUI(
-                                    historyCount = uiState.history.size,
-                                    hasCameraPermission = hasCameraPermission,
-                                    onRequestCameraPermission = onRequestCameraPermission,
-                                    onClearHistory = vm::clearHistory
-                                )
-                            }
-                        }
+                HomeBottomSheet(
+                    containerHeight = containerHeight,
+                    pagerState = pagerState,
+                    onTabSelected = { page ->
+                        pagerState.scrollToPage(page)
                     }
+                ) {
+                    HomePagerContent(
+                        pagerState = pagerState,
+                        currentResult = currentResult,
+                        editableResult = editableResult,
+                        history = history,
+                        isImportingImage = isImportingImage,
+                        hasCameraPermission = hasCameraPermission,
+                        onRequestCameraPermission = onRequestCameraPermission,
+                        onCommitEditedResult = vm::commitEditableResult,
+                        onClearResult = vm::clearCurrentResult,
+                        onTextChange = vm::updateEditableResult,
+                        onImport = vm::handleUri,
+                        onSelectHistoryItem = vm::selectHistoryItem,
+                        onClearHistory = vm::clearHistory
+                    )
                 }
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun HomeBottomSheet(
+    containerHeight: androidx.compose.ui.unit.Dp,
+    pagerState: androidx.compose.foundation.pager.PagerState,
+    onTabSelected: suspend (Int) -> Unit,
+    content: @Composable () -> Unit
+) {
+    val density = LocalDensity.current
+    val coroutineScope = rememberCoroutineScope()
+    val sheetPeekHeight = 76.dp
+    val sheetExpandedTop = 104.dp
+    val containerHeightPx = with(density) { containerHeight.toPx() }
+    val peekHeightPx = with(density) { sheetPeekHeight.toPx() }
+    val expandedTopPx = with(density) { sheetExpandedTop.toPx() }
+    val collapsedOffsetPx = (containerHeightPx - peekHeightPx).coerceAtLeast(expandedTopPx)
+    val sheetOffsetPx = remember(collapsedOffsetPx) { mutableFloatStateOf(collapsedOffsetPx) }
+
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(containerHeight)
+            .offset { IntOffset(0, sheetOffsetPx.floatValue.roundToInt()) }
+            .draggable(
+                orientation = Orientation.Vertical,
+                state = rememberDraggableState { delta ->
+                    val next = sheetOffsetPx.floatValue + delta
+                    sheetOffsetPx.floatValue = next.coerceIn(expandedTopPx, collapsedOffsetPx)
+                },
+                onDragStopped = {
+                    val midpoint = (expandedTopPx + collapsedOffsetPx) / 2f
+                    sheetOffsetPx.floatValue = if (sheetOffsetPx.floatValue < midpoint) {
+                        expandedTopPx
+                    } else {
+                        collapsedOffsetPx
+                    }
+                }
+            ),
+        shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+        color = MaterialTheme.colors.surface,
+        elevation = 12.dp
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            SheetHandle()
+            HomeTabBar(
+                selectedIndex = pagerState.currentPage,
+                onTabSelected = { index ->
+                    coroutineScope.launch {
+                        onTabSelected(index)
+                        sheetOffsetPx.floatValue = expandedTopPx
+                    }
+                }
+            )
+            content()
+        }
+    }
+}
+
+@Composable
+private fun HomePagerContent(
+    pagerState: androidx.compose.foundation.pager.PagerState,
+    currentResult: String,
+    editableResult: String,
+    history: List<String>,
+    isImportingImage: Boolean,
+    hasCameraPermission: Boolean,
+    onRequestCameraPermission: () -> Unit,
+    onCommitEditedResult: () -> Unit,
+    onClearResult: () -> Unit,
+    onTextChange: (String) -> Unit,
+    onImport: (android.net.Uri?) -> Unit,
+    onSelectHistoryItem: (String) -> Unit,
+    onClearHistory: () -> Unit
+) {
+    HorizontalPager(
+        state = pagerState,
+        modifier = Modifier.fillMaxSize()
+    ) { index ->
+        when (HomeTab.entries[index]) {
+            HomeTab.Result -> ResultUI(
+                result = currentResult,
+                onCommitEditedResult = onCommitEditedResult,
+                onClearResult = onClearResult
+            )
+
+            HomeTab.Edit -> EditUI(
+                text = editableResult,
+                onTextChange = onTextChange,
+                onApply = onCommitEditedResult
+            )
+
+            HomeTab.Import -> LocalUI(
+                isImporting = isImportingImage,
+                onImport = onImport
+            )
+
+            HomeTab.History -> HistoryUI(
+                history = history,
+                onSelect = onSelectHistoryItem
+            )
+
+            HomeTab.Settings -> SettingUI(
+                historyCount = history.size,
+                hasCameraPermission = hasCameraPermission,
+                onRequestCameraPermission = onRequestCameraPermission,
+                onClearHistory = onClearHistory
+            )
         }
     }
 }
@@ -294,11 +343,10 @@ private fun HomeTabBar(
 
 @Composable
 private fun HeroCameraLayer(
-    uiState: ScanUiState,
+    hasResult: Boolean,
     hasCameraPermission: Boolean,
     onRequestCameraPermission: () -> Unit,
-    onQrDetected: (String) -> Unit,
-    expansionProgress: Float
+    onQrDetected: (String) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         if (hasCameraPermission) {
@@ -337,43 +385,26 @@ private fun HeroCameraLayer(
                         style = MaterialTheme.typography.subtitle1,
                         fontWeight = FontWeight.SemiBold
                     )
-                    if (expansionProgress < 0.55f) {
-                        Text(
-                            text = if (hasCameraPermission) {
-                                stringResource(R.string.camera_live_title)
-                            } else {
-                                stringResource(R.string.camera_permission_title)
-                            },
-                            color = Color.White.copy(alpha = 0.82f),
-                            style = MaterialTheme.typography.caption
-                        )
-                    }
+                    Text(
+                        text = if (hasCameraPermission) {
+                            stringResource(R.string.camera_live_title)
+                        } else {
+                            stringResource(R.string.camera_permission_title)
+                        },
+                        color = Color.White.copy(alpha = 0.82f),
+                        style = MaterialTheme.typography.caption
+                    )
                 }
             }
 
             StatusPill(
                 icon = Icons.Rounded.QrCodeScanner,
-                label = if (uiState.currentResult.isBlank()) {
+                label = if (!hasResult) {
                     stringResource(R.string.status_ready)
                 } else {
                     stringResource(R.string.status_updated)
                 },
                 tint = MaterialTheme.colors.primary
-            )
-        }
-
-        if (expansionProgress < 0.35f) {
-            Text(
-                text = if (hasCameraPermission) {
-                    stringResource(R.string.camera_live_description)
-                } else {
-                    stringResource(R.string.camera_permission_description)
-                },
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(start = 20.dp, end = 20.dp, bottom = 108.dp),
-                color = Color.White.copy(alpha = 0.88f),
-                style = MaterialTheme.typography.body2
             )
         }
     }
@@ -471,11 +502,10 @@ private fun CameraPermissionUI(onRequestCameraPermission: () -> Unit) {
 private fun MainUiPermissionPreview() {
     QRScanTheme {
         HeroCameraLayer(
-            uiState = ScanUiState(),
+            hasResult = false,
             hasCameraPermission = false,
             onRequestCameraPermission = {},
-            onQrDetected = {},
-            expansionProgress = 0f
+            onQrDetected = {}
         )
     }
 }
