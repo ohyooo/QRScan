@@ -6,59 +6,50 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 
+private const val MAX_HISTORY_SIZE = 20
 
-val KEY_LIST = stringPreferencesKey("list")
+private val historyKey = stringPreferencesKey("list")
 
-val Context.ds: DataStore<Preferences> by preferencesDataStore(name = "history")
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "history")
 
-suspend fun Context.addHistory(result: String): List<String> {
-    val value = getHistories().apply {
-        if (result.isBlank()) {
-            return this
-        }
-        if (contains(result)) {
-            removeAt(indexOf(result))
-        }
-        if (size > 20) {
-            removeFirstOrNull()
-        }
+class HistoryRepository(private val context: Context) {
 
-        if (result == lastOrNull()) return this
-        add(result)
+    val history: Flow<List<String>> = context.dataStore.data.map { preferences ->
+        decodeHistory(preferences[historyKey])
     }
 
-    if (result.isNotBlank()) {
-        ds.edit { settings ->
-            settings[KEY_LIST] = Json.encodeToString(value)
+    suspend fun add(entry: String) {
+        val normalizedEntry = entry.trim()
+        if (normalizedEntry.isBlank()) return
+
+        context.dataStore.edit { preferences ->
+            val updatedHistory = decodeHistory(preferences[historyKey])
+                .toMutableList()
+                .apply {
+                    remove(normalizedEntry)
+                    add(normalizedEntry)
+                    while (size > MAX_HISTORY_SIZE) {
+                        removeAt(0)
+                    }
+                }
+
+            preferences[historyKey] = Json.encodeToString(updatedHistory)
         }
     }
-    return value
-}
 
-private fun Context.getHistories(): MutableList<String> {
-    var json = "[]"
-
-    runBlocking {
-        ds.data.map { settings ->
-            val listString = settings[KEY_LIST] ?: return@map
-            json = listString
-        }.first()
+    suspend fun clear() {
+        context.dataStore.edit { preferences ->
+            preferences[historyKey] = "[]"
+        }
     }
-    return try {
-        Json.decodeFromString(json)
-    } catch (e: Exception) {
-        e.printStackTrace()
-        mutableListOf()
-    }
-}
 
-suspend fun Context.clearHistory() {
-    ds.edit { settings ->
-        settings[KEY_LIST] = "[]"
+    private fun decodeHistory(encodedValue: String?): List<String> = try {
+        Json.decodeFromString<List<String>>(encodedValue ?: "[]")
+    } catch (_: Exception) {
+        emptyList()
     }
 }

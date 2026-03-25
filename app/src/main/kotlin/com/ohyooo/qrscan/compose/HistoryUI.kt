@@ -1,82 +1,91 @@
 package com.ohyooo.qrscan.compose
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextLinkStyles
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.withLink
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ohyooo.qrscan.util.KEY_LIST
-import com.ohyooo.qrscan.util.ds
-import kotlinx.serialization.json.Json
-import java.util.regex.Pattern
+import com.ohyooo.qrscan.R
+import com.ohyooo.qrscan.compose.theme.QRScanTheme
+import com.ohyooo.qrscan.compose.theme.panelBackground
 
 @Composable
-fun HistoryUI() {
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
-
-    val results = remember {
-        mutableStateListOf<String>()
-    }
-
-    LaunchedEffect(coroutineScope) {
-        context.ds.data.collect {
-            val listString = it[KEY_LIST] ?: return@collect
-            results.clear()
-            results.addAll(Json.decodeFromString(listString))
+fun HistoryUI(
+    history: List<String>,
+    onSelect: (String) -> Unit
+) {
+    if (history.isEmpty()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(20.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = stringResource(R.string.history_empty_title),
+                style = MaterialTheme.typography.h6,
+                fontWeight = FontWeight.SemiBold
+            )
+            Text(
+                text = stringResource(R.string.history_empty_body),
+                modifier = Modifier.padding(top = 8.dp),
+                style = MaterialTheme.typography.body2
+            )
         }
+        return
     }
 
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
-        items(results) { result ->
-            Box(
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = PaddingValues(20.dp)
+    ) {
+        items(history) { result ->
+            Surface(
                 modifier = Modifier
-                    .padding(16.dp)
                     .fillMaxWidth()
+                    .clickable { onSelect(result) },
+                shape = RoundedCornerShape(20.dp),
+                color = MaterialTheme.colors.panelBackground
             ) {
-                val annotatedLinkString = buildAnnotatedString {
-                    val pattern = Pattern.compile("(?:(?:https?|ftp)://)?[-a-zA-Z0-9@:%._+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)")
-                    val matcher = pattern.matcher(result)
-                    val builder = AnnotatedString.Builder(result)
-
-                    while (matcher.find()) {
-                        val urlString = matcher.group(0)
-                        withLink(
-                            LinkAnnotation.Url(
-                                urlString,
-                                TextLinkStyles(style = SpanStyle(color = Color.Blue))
-                            ) {
-                            }
-                        ) {
-                            append(urlString)
-                        }
-                    }
-                    builder.toAnnotatedString()
-
+                Column(modifier = Modifier.padding(18.dp)) {
+                    Text(
+                        text = result,
+                        style = MaterialTheme.typography.body1,
+                        maxLines = 3
+                    )
+                    Text(
+                        text = stringResource(R.string.history_item_hint),
+                        modifier = Modifier.padding(top = 10.dp),
+                        style = MaterialTheme.typography.caption
+                    )
                 }
-
-                Text(
-                    text = annotatedLinkString,
-                    modifier = Modifier.fillMaxWidth()
-                )
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun HistoryPreview() {
+    QRScanTheme {
+        HistoryUI(
+            history = listOf("https://openai.com", "BEGIN:VCARD\nFN:Jane Doe\nTEL:+123456"),
+            onSelect = {}
+        )
     }
 }

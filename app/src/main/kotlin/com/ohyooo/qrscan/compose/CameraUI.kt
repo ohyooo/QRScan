@@ -12,37 +12,65 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.ohyooo.qrscan.ScanViewModel
 import com.ohyooo.qrscan.util.QrCodeAnalyzer
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 @Composable
-fun CameraUI(vm: ScanViewModel) {
-    val lo = LocalLifecycleOwner.current
-    val coroutineScope = rememberCoroutineScope()
-    AndroidView(modifier = Modifier.fillMaxSize(),
-        factory = { context ->
-            PreviewView(context).also {
-                it.post {
-                    initCamera(context, lo, vm, it, coroutineScope)
-                }
-            }
-        })
+fun CameraUI(onQrDetected: (String) -> Unit) {
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val previewView = remember {
+        PreviewView(context).apply {
+            implementationMode = PreviewView.ImplementationMode.COMPATIBLE
+            scaleType = PreviewView.ScaleType.FILL_CENTER
+        }
+    }
+    val executor = remember { Executors.newSingleThreadExecutor() }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            executor.shutdown()
+        }
+    }
+
+    LaunchedEffect(context, lifecycleOwner, previewView, onQrDetected) {
+        initCamera(
+            context = context,
+            lifecycleOwner = lifecycleOwner,
+            view = previewView,
+            executor = executor,
+            onQrDetected = onQrDetected
+        )
+    }
+
+    AndroidView(
+        modifier = Modifier.fillMaxSize(),
+        factory = { previewView }
+    )
 }
 
-//https://www.devbitsandbytes.com/configuring-camerax-in-jetpack-compose-to-take-picture/
-private fun initCamera(context: Context, lifecycleOwner: LifecycleOwner, vm: ScanViewModel, view: PreviewView, coroutineScope: CoroutineScope) {
-    val cameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
+private suspend fun initCamera(
+    context: Context,
+    lifecycleOwner: LifecycleOwner,
+    view: PreviewView,
+    executor: ExecutorService,
+    onQrDetected: (String) -> Unit
+) {
+    val cameraSelector = CameraSelector.Builder()
+        .requireLensFacing(CameraSelector.LENS_FACING_BACK)
+        .build()
     val rotation = view.display?.rotation ?: Surface.ROTATION_0
     val resolutionSelector = ResolutionSelector.Builder()
         .setAspectRatioStrategy(
@@ -58,28 +86,24 @@ private fun initCamera(context: Context, lifecycleOwner: LifecycleOwner, vm: Sca
         .setTargetRotation(rotation)
         .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
         .build()
-
-    val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
-    cameraProviderFuture.addListener({
-        imageAnalysis.setAnalyzer(Executors.newSingleThreadExecutor(), QrCodeAnalyzer(vm.qrCallback))
-
-        coroutineScope.launch {
-            val cameraProvider = context.getCameraProvider()
-            cameraProvider.unbindAll()
-            cameraProvider.bindToLifecycle(
-                lifecycleOwner,
-                cameraSelector,
-                Preview.Builder()
-                    .setResolutionSelector(resolutionSelector)
-                    .setTargetRotation(rotation)
-                    .build()
-                    .apply {
-                        surfaceProvider = view.surfaceProvider
-                    },
-                imageAnalysis
-            )
+        .apply {
+            setAnalyzer(executor, QrCodeAnalyzer(onQrDetected))
         }
-    }, ContextCompat.getMainExecutor(context))
+
+    val cameraProvider = context.getCameraProvider()
+    cameraProvider.unbindAll()
+    cameraProvider.bindToLifecycle(
+        lifecycleOwner,
+        cameraSelector,
+        Preview.Builder()
+            .setResolutionSelector(resolutionSelector)
+            .setTargetRotation(rotation)
+            .build()
+            .apply {
+                surfaceProvider = view.surfaceProvider
+            },
+        imageAnalysis
+    )
 }
 
 suspend fun Context.getCameraProvider(): ProcessCameraProvider = suspendCoroutine { continuation ->

@@ -3,21 +3,38 @@ package com.ohyooo.qrscan
 import android.app.Application
 import android.content.Intent
 import android.net.Uri
-import android.widget.Toast
+import androidx.core.content.IntentCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.tasks.Task
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
-import com.ohyooo.qrscan.util.addHistory
+import com.ohyooo.qrscan.util.HistoryRepository
 import com.ohyooo.qrscan.util.barcodeClient
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class ScanViewModel(context: Application) : AndroidViewModel(context) {
-    val result: StateFlow<String>
-        field = MutableStateFlow("")
+data class ScanUiState(
+    val currentResult: String = "",
+    val editableResult: String = "",
+    val history: List<String> = emptyList(),
+    val isImportingImage: Boolean = false
+)
+
+class ScanViewModel(
+    application: Application,
+    private val historyRepository: HistoryRepository
+) : AndroidViewModel(application) {
+    private val _uiState = MutableStateFlow(ScanUiState())
+    val uiState: StateFlow<ScanUiState> = _uiState.asStateFlow()
+
+    private val _messages = MutableSharedFlow<String>()
+    val messages = _messages.asSharedFlow()
 
     private var lastTime = 0L
 
@@ -25,7 +42,7 @@ class ScanViewModel(context: Application) : AndroidViewModel(context) {
         val now = System.currentTimeMillis()
         if (now - lastTime > 2000) {
             lastTime = now
-            result.value = r
+            publishResult(r)
         }
     }
 
@@ -34,31 +51,88 @@ class ScanViewModel(context: Application) : AndroidViewModel(context) {
 
     init {
         viewModelScope.launch {
-            result.collect {
-                if (it.isNotBlank()) context.addHistory(it)
+            historyRepository.history.collect { history ->
+                _uiState.update { it.copy(history = history.asReversed()) }
             }
+        }
+    }
+
+    fun updateEditableResult(value: String) {
+        _uiState.update { it.copy(editableResult = value) }
+    }
+
+    fun commitEditableResult() {
+        publishResult(_uiState.value.editableResult)
+    }
+
+    fun clearCurrentResult() {
+        _uiState.update { it.copy(currentResult = "", editableResult = "") }
+    }
+
+    fun selectHistoryItem(value: String) {
+        publishResult(value, addToHistory = false)
+    }
+
+    fun clearHistory() {
+        viewModelScope.launch {
+            historyRepository.clear()
+            _messages.emit(getApplication<Application>().getString(R.string.message_history_cleared))
         }
     }
 
     fun handleUri(uri: Uri?) {
-        uri?.task?.addOnSuccessListener { r ->
-            r.firstOrNull()?.displayValue?.let(result::tryEmit)
-        }
+        uri ?: return
+        importFromUri(uri)
     }
 
     fun handleIntent(intent: Intent?) {
         if (intent?.type?.startsWith("image/") != true) return
-        if ((intent.clipData?.itemCount ?: 0) <= 0) return
+        val uri = intent.clipData?.getItemAt(0)?.uri
+            ?: IntentCompat.getParcelableExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)
+            ?: return
+        importFromUri(uri)
+    }
 
-        val uri = intent.clipData?.getItemAt(0)?.uri ?: return
-
+    private fun importFromUri(uri: Uri) {
+        _uiState.update { it.copy(isImportingImage = true) }
         uri.task
-            .addOnCompleteListener { r ->
-                if (r.result.isNullOrEmpty()) {
-                    Toast.makeText(getApplication(), "XxxxxxxxxX", Toast.LENGTH_SHORT).show()
+            .addOnSuccessListener { barcodes ->
+                val value = barcodes.firstNotNullOfOrNull { it.displayValue?.trim() }
+                if (value.isNullOrBlank()) {
+                    emitMessage(getApplication<Application>().getString(R.string.message_no_code_found))
                 } else {
-                    r.result.firstOrNull()?.displayValue?.let(result::tryEmit)
+                    publishResult(value)
                 }
             }
+            .addOnFailureListener {
+                emitMessage(getApplication<Application>().getString(R.string.message_unable_read_image))
+            }
+            .addOnCompleteListener {
+                _uiState.update { state -> state.copy(isImportingImage = false) }
+            }
+    }
+
+    private fun publishResult(value: String, addToHistory: Boolean = true) {
+        val normalizedValue = value.trim()
+        if (normalizedValue.isBlank()) return
+
+        _uiState.update {
+            it.copy(
+                currentResult = normalizedValue,
+                editableResult = normalizedValue
+            )
+        }
+
+        if (addToHistory) {
+            viewModelScope.launch {
+                historyRepository.add(normalizedValue)
+            }
+        }
+    }
+
+    private fun emitMessage(message: String) {
+        viewModelScope.launch {
+            _messages.emit(message)
+        }
     }
 }
