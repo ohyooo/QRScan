@@ -11,8 +11,8 @@ serialization = "1.10.0"
 koin = "4.2.0"
 
 accompanist = "0.36.0"
-compose = "1.10.5"
-camerax = "1.5.3"
+compose = "1.10.6"
+camerax = "1.6.0"
 
 
 [plugins]
