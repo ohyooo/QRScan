@@ -20,7 +20,7 @@ agp = { id = "com.android.application", version.ref = "agp" }
 alp = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 ks = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kmm = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-jc = { id = "org.jetbrains.compose", version = "1.11.0-alpha04" }
+jc = { id = "org.jetbrains.compose", version = "1.11.0-beta01" }
 cc = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
 [libraries]
