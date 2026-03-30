@@ -26,6 +26,11 @@ data class ScanUiState(
     val isImportingImage: Boolean = false
 )
 
+enum class ScanTabTarget {
+    Result,
+    Edit
+}
+
 class ScanViewModel(
     application: Application,
     private val historyRepository: HistoryRepository
@@ -35,6 +40,9 @@ class ScanViewModel(
 
     private val _messages = MutableSharedFlow<String>()
     val messages = _messages.asSharedFlow()
+
+    private val _tabRequests = MutableSharedFlow<ScanTabTarget>(extraBufferCapacity = 1)
+    val tabRequests = _tabRequests.asSharedFlow()
 
     private var lastTime = 0L
 
@@ -70,7 +78,7 @@ class ScanViewModel(
     }
 
     fun selectHistoryItem(value: String) {
-        publishResult(value, addToHistory = false)
+        publishResult(value, addToHistory = false, tabTarget = ScanTabTarget.Edit)
     }
 
     fun clearHistory() {
@@ -112,7 +120,11 @@ class ScanViewModel(
             }
     }
 
-    private fun publishResult(value: String, addToHistory: Boolean = true) {
+    private fun publishResult(
+        value: String,
+        addToHistory: Boolean = true,
+        tabTarget: ScanTabTarget = ScanTabTarget.Result
+    ) {
         val normalizedValue = value.trim()
         if (normalizedValue.isBlank()) return
 
@@ -122,6 +134,7 @@ class ScanViewModel(
                 editableResult = normalizedValue
             )
         }
+        _tabRequests.tryEmit(tabTarget)
 
         if (addToHistory) {
             viewModelScope.launch {

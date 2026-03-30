@@ -62,6 +62,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.ohyooo.qrscan.R
+import com.ohyooo.qrscan.ScanTabTarget
 import com.ohyooo.qrscan.ScanViewModel
 import com.ohyooo.qrscan.compose.theme.QRScanTheme
 import com.ohyooo.qrscan.compose.theme.heroGradientBottom
@@ -92,15 +93,21 @@ fun MainUI(
     val pagerState = rememberPagerState { HomeTab.entries.size }
     val scaffoldState = rememberScaffoldState()
 
-    LaunchedEffect(currentResult) {
-        if (currentResult.isNotBlank() && pagerState.currentPage != HomeTab.Result.ordinal) {
-            pagerState.scrollToPage(HomeTab.Result.ordinal)
+    LaunchedEffect(Unit) {
+        vm.messages.collect { message ->
+            scaffoldState.snackbarHostState.showSnackbar(message)
         }
     }
 
     LaunchedEffect(Unit) {
-        vm.messages.collect { message ->
-            scaffoldState.snackbarHostState.showSnackbar(message)
+        vm.tabRequests.collect { target ->
+            val page = when (target) {
+                ScanTabTarget.Result -> HomeTab.Result.ordinal
+                ScanTabTarget.Edit -> HomeTab.Edit.ordinal
+            }
+            if (pagerState.currentPage != page) {
+                pagerState.scrollToPage(page)
+            }
         }
     }
 
@@ -188,14 +195,7 @@ private fun HomeBottomSheet(
                     val next = sheetOffsetPx.floatValue + delta
                     sheetOffsetPx.floatValue = next.coerceIn(expandedTopPx, collapsedOffsetPx)
                 },
-                onDragStopped = {
-                    val midpoint = (expandedTopPx + collapsedOffsetPx) / 2f
-                    sheetOffsetPx.floatValue = if (sheetOffsetPx.floatValue < midpoint) {
-                        expandedTopPx
-                    } else {
-                        collapsedOffsetPx
-                    }
-                }
+                onDragStopped = {}
             ),
         shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
         color = MaterialTheme.colors.surface,
@@ -208,7 +208,6 @@ private fun HomeBottomSheet(
                 onTabSelected = { index ->
                     coroutineScope.launch {
                         onTabSelected(index)
-                        sheetOffsetPx.floatValue = expandedTopPx
                     }
                 }
             )

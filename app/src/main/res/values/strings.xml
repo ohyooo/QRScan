@@ -33,7 +33,7 @@
     <string name="import_reading_image">Reading Image</string>
     <string name="history_empty_title">History is empty</string>
     <string name="history_empty_body">Recent scans and imports will appear here. Tap an item to reuse it.</string>
-    <string name="history_item_hint">Tap to load into the result panel</string>
+    <string name="history_item_hint">Tap to load into the edit panel</string>
     <string name="settings_title">Settings</string>
     <string name="settings_saved_history">Saved history items: %1$d</string>
     <string name="settings_camera_enabled">Camera access is enabled.</string>

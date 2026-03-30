@@ -1,7 +1,6 @@
 package com.ohyooo.qrscan.compose
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,7 +35,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import com.ohyooo.qrscan.R
 import com.ohyooo.qrscan.compose.theme.QRScanTheme
 import com.ohyooo.qrscan.compose.theme.panelBackground
@@ -51,7 +49,7 @@ fun ResultUI(
 
     @Suppress("DEPRECATION")
     val clipboardManager = LocalClipboardManager.current
-    val normalizedUri = result.toDisplayUri()
+    val normalizedUri = result.toOpenableUri()
 
     Column(
         modifier = Modifier
@@ -168,7 +166,7 @@ fun ResultUI(
         if (normalizedUri != null) {
             OutlinedButton(
                 onClick = {
-                    context.startActivity(Intent(Intent.ACTION_VIEW, normalizedUri))
+                    context.openUri(normalizedUri)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -180,19 +178,6 @@ fun ResultUI(
             }
         }
     }
-}
-
-private fun String.toDisplayUri(): Uri? {
-    val trimmed = trim()
-    if (trimmed.isBlank()) return null
-
-    val candidate = when {
-        trimmed.startsWith("http://") || trimmed.startsWith("https://") -> trimmed
-        trimmed.contains('.') && !trimmed.contains(' ') -> "https://$trimmed"
-        else -> return null
-    }
-
-    return candidate.toUri()
 }
 
 @Preview(showBackground = true)

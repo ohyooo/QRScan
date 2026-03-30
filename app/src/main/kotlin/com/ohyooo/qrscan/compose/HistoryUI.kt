@@ -4,17 +4,23 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.OpenInBrowser
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,6 +34,8 @@ fun HistoryUI(
     history: List<String>,
     onSelect: (String) -> Unit
 ) {
+    val context = LocalContext.current
+
     if (history.isEmpty()) {
         Column(
             modifier = Modifier
@@ -55,6 +63,7 @@ fun HistoryUI(
         contentPadding = PaddingValues(20.dp)
     ) {
         items(history) { result ->
+            val openableUri = result.toOpenableUri()
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -68,11 +77,26 @@ fun HistoryUI(
                         style = MaterialTheme.typography.body1,
                         maxLines = 3
                     )
-                    Text(
-                        text = stringResource(R.string.history_item_hint),
-                        modifier = Modifier.padding(top = 10.dp),
-                        style = MaterialTheme.typography.caption
-                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = stringResource(R.string.history_item_hint),
+                            style = MaterialTheme.typography.caption
+                        )
+                        if (openableUri != null) {
+                            TextButton(onClick = { context.openUri(openableUri) }) {
+                                Icon(Icons.Rounded.OpenInBrowser, contentDescription = null)
+                                Text(
+                                    text = stringResource(R.string.action_open_link),
+                                    modifier = Modifier.padding(start = 6.dp)
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
