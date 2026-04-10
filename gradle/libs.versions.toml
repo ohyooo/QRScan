@@ -7,8 +7,8 @@ compile-minor = "1"
 agp = "9.1.0"
 kotlin = "2.3.20"
 workmanager = "2.8.1"
-serialization = "1.10.0"
-koin = "4.2.0"
+serialization = "1.11.0"
+koin = "4.2.1"
 
 accompanist = "0.36.0"
 compose = "1.10.6"
@@ -20,13 +20,13 @@ agp = { id = "com.android.application", version.ref = "agp" }
 alp = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 ks = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kmm = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-jc = { id = "org.jetbrains.compose", version = "1.11.0-beta01" }
+jc = { id = "org.jetbrains.compose", version = "1.11.0-beta02" }
 cc = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
 [libraries]
 # kotlin
 # https://github.com/Kotlin/kotlinx.serialization/releases
-kotlinx-serialization-core = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.10.0"
+kotlinx-serialization-core = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.11.0"
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 kotlinx-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.7.1-0.6.x-compat"
 
