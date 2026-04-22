@@ -4,7 +4,7 @@ target-sdk = "36"
 compile-sdk = "36"
 compile-minor = "1"
 
-agp = "9.1.0"
+agp = "9.2.0"
 kotlin = "2.3.20"
 workmanager = "2.8.1"
 serialization = "1.11.0"
@@ -20,7 +20,7 @@ agp = { id = "com.android.application", version.ref = "agp" }
 alp = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 ks = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kmm = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-jc = { id = "org.jetbrains.compose", version = "1.11.0-beta02" }
+jc = { id = "org.jetbrains.compose", version = "1.11.0-beta03" }
 cc = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
 [libraries]
