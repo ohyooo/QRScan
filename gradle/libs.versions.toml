@@ -11,8 +11,8 @@ serialization = "1.11.0"
 koin = "4.2.1"
 
 accompanist = "0.36.0"
-compose = "1.11.0"
-camerax = "1.6.0"
+compose = "1.11.1"
+camerax = "1.6.1"
 
 
 [plugins]
@@ -28,7 +28,7 @@ cc = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 # https://github.com/Kotlin/kotlinx.serialization/releases
 kotlinx-serialization-core = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.11.0"
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
-kotlinx-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.7.1-0.6.x-compat"
+kotlinx-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.8.0-0.6.x-compat"
 
 # https://github.com/Kotlin/kotlinx.coroutines/releases
 kotlinx-coroutines-android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2"
