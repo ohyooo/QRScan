@@ -31,8 +31,8 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 kotlinx-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.8.0-0.6.x-compat"
 
 # https://github.com/Kotlin/kotlinx.coroutines/releases
-kotlinx-coroutines-android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2"
-kotlinx-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2"
+kotlinx-coroutines-android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0"
+kotlinx-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0"
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
