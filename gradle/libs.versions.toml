@@ -20,7 +20,7 @@ agp = { id = "com.android.application", version.ref = "agp" }
 alp = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 ks = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kmm = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-jc = { id = "org.jetbrains.compose", version = "1.11.0-rc01" }
+jc = { id = "org.jetbrains.compose", version = "1.11.0" }
 cc = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
 [libraries]
@@ -38,7 +38,7 @@ koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
 
 # Google
-google-material = "com.google.android.material:material:1.13.0"
+google-material = "com.google.android.material:material:1.14.0"
 google-barcode = "com.google.mlkit:barcode-scanning:17.3.0"
 google-accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
 google-accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanist" }
