@@ -69,3 +69,6 @@
 -dontwarn androidx.window.extensions.core.util.function.Consumer
 -dontwarn androidx.window.extensions.core.util.function.Function
 -dontwarn androidx.window.extensions.core.util.function.Predicate
+
+-dontwarn androidx.window.extensions.**
+-dontwarn androidx.window.sidecar.**
