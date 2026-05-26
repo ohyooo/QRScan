@@ -57,7 +57,7 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: app-release-${{ steps.time.outputs.time }}
+          name: app-release
           path: |
             app/build/outputs/apk/release/*.apk
           if-no-files-found: error
