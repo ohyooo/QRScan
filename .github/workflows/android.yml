@@ -18,13 +18,6 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Get Time
-        id: time
-        uses: nanzm/get-time-action@master
-        with:
-          timeZone: 8
-          format: 'YYYYMMDDHHmmss'
-
       - name: Setup JDK
         uses: actions/setup-java@main
         with:
