@@ -11,7 +11,6 @@ permissions:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -25,43 +24,41 @@ jobs:
         with:
           timeZone: 8
           format: 'YYYYMMDDHHmmss'
-     
+
       - name: Setup JDK
         uses: actions/setup-java@main
         with:
           distribution: 'zulu'
           java-version: '21'
           java-package: jdk
-          cache: 'gradle'
-          
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+
+      - name: Restore Gradle cache
+        id: gradle-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.gradle/build-cache
+            .gradle
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/libs.versions.toml') }}-${{ github.run_id }}
+          restore-keys: |
+            gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/libs.versions.toml') }}-
+            gradle-${{ runner.os }}-
 
       - name: Build APK
-        run: ./gradlew :app:assembleRelease
+        run: chmod +x gradlew && ./gradlew :app:assembleRelease --build-cache
 
-      #      - name: Generate release tag
-      #        id: tag
-      #        run: |
-      #          echo "::set-output name=release_tag::$(date +"%Y.%m.%d_%H-%M")"
-      #
-      #      - name: Upload to release
-      #        uses: svenstaro/upload-release-action@master
-      #        with:
-      #          repo_token: ${{ secrets.GITHUB_TOKEN }}
-      #          file: app/build/outputs/apk/release/*.apk
-      #          asset_name: ${{ steps.tag.outputs.release_tag }}
-      #          tag: ${{ github.ref }}_${{ steps.time.outputs.time }}
-      #          overwrite: true
-      #          file_glob: true
-
-      - name: Remove old Releases
-        uses: dev-drprasad/delete-older-releases@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Save Gradle cache
+        if: success()
+        uses: actions/cache/save@v4
         with:
-          keep_latest: 3
-          delete_tags: true
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.gradle/build-cache
+            .gradle
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/libs.versions.toml') }}-${{ github.run_id }}
 
       - name: Delete workflow runs
         uses: GitRML/delete-workflow-runs@main
