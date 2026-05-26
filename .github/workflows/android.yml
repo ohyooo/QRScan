@@ -25,6 +25,11 @@ jobs:
           java-version: '21'
           java-package: jdk
 
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          dependency-graph: generate-and-submit
+
       - name: Restore Gradle cache
         id: gradle-cache
         uses: actions/cache/restore@v4
