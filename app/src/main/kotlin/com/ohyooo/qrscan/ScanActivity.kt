@@ -3,17 +3,13 @@ package com.ohyooo.qrscan
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.Window
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
+import androidx.core.content.IntentCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.ohyooo.qrscan.compose.MainUI
@@ -29,26 +25,14 @@ class ScanActivity : ComponentActivity() {
 
         requestWindowFeature(Window.FEATURE_NO_TITLE)
 
-        handleIntent()
+        syncCameraPermission()
+        handleIntent(intent)
 
         makeStatusBarTransparent()
 
         setContent {
             QRScanTheme {
-                var hasCameraPermission by remember { mutableStateOf(hasCameraPermission()) }
-                val permissionLauncher = rememberLauncherForActivityResult(
-                    contract = ActivityResultContracts.RequestPermission()
-                ) { granted ->
-                    hasCameraPermission = granted
-                }
-
-                MainUI(
-                    vm = vm,
-                    hasCameraPermission = hasCameraPermission,
-                    onRequestCameraPermission = {
-                        permissionLauncher.launch(Manifest.permission.CAMERA)
-                    }
-                )
+                MainUI(vm = vm)
             }
         }
     }
@@ -63,11 +47,22 @@ class ScanActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        handleIntent()
+        handleIntent(intent)
     }
 
-    private fun handleIntent() {
-        vm.handleIntent(intent)
+    override fun onResume() {
+        super.onResume()
+        syncCameraPermission()
+    }
+
+    private fun handleIntent(intent: Intent?) {
+        intent?.sharedImageUri()?.let { uri ->
+            vm.dispatch(ScanIntent.ExternalImageReceived(uri))
+        }
+    }
+
+    private fun syncCameraPermission() {
+        vm.dispatch(ScanIntent.CameraPermissionChanged(hasCameraPermission()))
     }
 
     private fun hasCameraPermission(): Boolean {
@@ -75,5 +70,12 @@ class ScanActivity : ComponentActivity() {
             this,
             Manifest.permission.CAMERA
         ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun Intent.sharedImageUri(): Uri? {
+        if (type?.startsWith("image/") != true) return null
+
+        return clipData?.getItemAt(0)?.uri
+            ?: IntentCompat.getParcelableExtra(this, Intent.EXTRA_STREAM, Uri::class.java)
     }
 }

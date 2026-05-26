@@ -14,10 +14,6 @@ import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -31,11 +27,12 @@ import com.ohyooo.qrscan.compose.theme.panelBackground
 fun SettingUI(
     historyCount: Int,
     hasCameraPermission: Boolean,
+    showClearHistoryDialog: Boolean,
     onRequestCameraPermission: () -> Unit,
-    onClearHistory: () -> Unit
+    onClearHistoryClick: () -> Unit,
+    onDismissClearHistory: () -> Unit,
+    onConfirmClearHistory: () -> Unit
 ) {
-    var showClearDialog by remember { mutableStateOf(false) }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -85,7 +82,7 @@ fun SettingUI(
         }
 
         Button(
-            onClick = { showClearDialog = true },
+            onClick = onClearHistoryClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp),
@@ -95,23 +92,20 @@ fun SettingUI(
         }
     }
 
-    if (showClearDialog) {
+    if (showClearHistoryDialog) {
         AlertDialog(
-            onDismissRequest = { showClearDialog = false },
+            onDismissRequest = onDismissClearHistory,
             title = { Text(stringResource(R.string.dialog_clear_history_title)) },
             text = { Text(stringResource(R.string.dialog_clear_history_body)) },
             confirmButton = {
                 Button(
-                    onClick = {
-                        showClearDialog = false
-                        onClearHistory()
-                    }
+                    onClick = onConfirmClearHistory
                 ) {
                     Text(stringResource(R.string.action_clear))
                 }
             },
             dismissButton = {
-                OutlinedButton(onClick = { showClearDialog = false }) {
+                OutlinedButton(onClick = onDismissClearHistory) {
                     Text(stringResource(R.string.dialog_cancel))
                 }
             }
@@ -126,8 +120,11 @@ private fun SettingsPreview() {
         SettingUI(
             historyCount = 12,
             hasCameraPermission = false,
+            showClearHistoryDialog = false,
             onRequestCameraPermission = {},
-            onClearHistory = {}
+            onClearHistoryClick = {},
+            onDismissClearHistory = {},
+            onConfirmClearHistory = {}
         )
     }
 }

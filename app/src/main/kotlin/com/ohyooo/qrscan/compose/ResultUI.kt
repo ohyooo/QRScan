@@ -1,6 +1,5 @@
 package com.ohyooo.qrscan.compose
 
-import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,10 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,15 +38,13 @@ import com.ohyooo.qrscan.compose.theme.panelBackground
 @Composable
 fun ResultUI(
     result: String,
+    canOpenLink: Boolean,
+    onCopyResult: () -> Unit,
+    onShareResult: () -> Unit,
+    onOpenResultLink: () -> Unit,
     onCommitEditedResult: () -> Unit,
     onClearResult: () -> Unit
 ) {
-    val context = LocalContext.current
-
-    @Suppress("DEPRECATION")
-    val clipboardManager = LocalClipboardManager.current
-    val normalizedUri = result.toOpenableUri()
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -117,7 +111,7 @@ fun ResultUI(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             OutlinedButton(
-                onClick = { clipboardManager.setText(AnnotatedString(result)) },
+                onClick = onCopyResult,
                 modifier = Modifier.weight(1f),
                 shape = RoundedCornerShape(16.dp)
             ) {
@@ -126,13 +120,7 @@ fun ResultUI(
             }
 
             OutlinedButton(
-                onClick = {
-                    val intent = Intent(Intent.ACTION_SEND).apply {
-                        type = "text/plain"
-                        putExtra(Intent.EXTRA_TEXT, result)
-                    }
-                    context.startActivity(Intent.createChooser(intent, null))
-                },
+                onClick = onShareResult,
                 modifier = Modifier.weight(1f),
                 shape = RoundedCornerShape(16.dp)
             ) {
@@ -163,11 +151,9 @@ fun ResultUI(
             }
         }
 
-        if (normalizedUri != null) {
+        if (canOpenLink) {
             OutlinedButton(
-                onClick = {
-                    context.openUri(normalizedUri)
-                },
+                onClick = onOpenResultLink,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),
@@ -186,6 +172,10 @@ private fun ResultPreview() {
     QRScanTheme {
         ResultUI(
             result = "https://example.com/invite?id=42",
+            canOpenLink = true,
+            onCopyResult = {},
+            onShareResult = {},
+            onOpenResultLink = {},
             onCommitEditedResult = {},
             onClearResult = {}
         )

@@ -1,9 +1,5 @@
 package com.ohyooo.qrscan.compose
 
-import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,13 +29,8 @@ import com.ohyooo.qrscan.compose.theme.panelBackground
 @Composable
 fun LocalUI(
     isImporting: Boolean,
-    onImport: (Uri?) -> Unit
+    onChooseImage: () -> Unit
 ) {
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = onImport
-    )
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -74,11 +65,7 @@ fun LocalUI(
                     style = MaterialTheme.typography.body2
                 )
                 Button(
-                    onClick = {
-                        launcher.launch(
-                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                        )
-                    },
+                    onClick = onChooseImage,
                     enabled = !isImporting,
                     shape = RoundedCornerShape(16.dp)
                 ) {
@@ -108,7 +95,7 @@ private fun LocalPreview() {
     QRScanTheme {
         LocalUI(
             isImporting = false,
-            onImport = {}
+            onChooseImage = {}
         )
     }
 }

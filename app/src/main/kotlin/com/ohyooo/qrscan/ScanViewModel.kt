@@ -1,140 +1,163 @@
 package com.ohyooo.qrscan
 
-import android.app.Application
-import android.content.Intent
 import android.net.Uri
-import androidx.core.content.IntentCompat
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.tasks.Task
-import com.google.mlkit.vision.barcode.common.Barcode
-import com.google.mlkit.vision.common.InputImage
+import com.ohyooo.qrscan.mvi.MviViewModel
 import com.ohyooo.qrscan.util.HistoryRepository
-import com.ohyooo.qrscan.util.barcodeClient
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import com.ohyooo.qrscan.util.ImageBarcodeReader
+import com.ohyooo.qrscan.util.toOpenableUri
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-data class ScanUiState(
-    val currentResult: String = "",
-    val editableResult: String = "",
-    val history: List<String> = emptyList(),
-    val isImportingImage: Boolean = false
-)
-
-enum class ScanTabTarget {
-    Result,
-    Edit
-}
-
 class ScanViewModel(
-    application: Application,
-    private val historyRepository: HistoryRepository
-) : AndroidViewModel(application) {
-    private val _uiState = MutableStateFlow(ScanUiState())
-    val uiState: StateFlow<ScanUiState> = _uiState.asStateFlow()
+    private val historyRepository: HistoryRepository,
+    private val imageBarcodeReader: ImageBarcodeReader
+) : MviViewModel<ScanIntent, ScanState, ScanEffect>(ScanState()) {
 
-    private val _messages = MutableSharedFlow<String>()
-    val messages = _messages.asSharedFlow()
-
-    private val _tabRequests = MutableSharedFlow<ScanTabTarget>(extraBufferCapacity = 1)
-    val tabRequests = _tabRequests.asSharedFlow()
-
-    private var lastTime = 0L
-
-    val qrCallback: (qrCode: String) -> Unit = { r ->
-        val now = System.currentTimeMillis()
-        if (now - lastTime > 2000) {
-            lastTime = now
-            publishResult(r)
-        }
-    }
-
-    private val Uri.task: Task<List<Barcode>>
-        get() = barcodeClient.process(InputImage.fromFilePath(getApplication(), this))
+    private var lastScanTime = 0L
+    private var imageImportJob: Job? = null
+    private var imageImportSequence = 0
 
     init {
         viewModelScope.launch {
-            historyRepository.history.collect { history ->
-                _uiState.update { it.copy(history = history.asReversed()) }
+            historyRepository.history.collectLatest { history ->
+                setState {
+                    copy(history = history.asReversed().map(::ScanHistoryItem))
+                }
             }
         }
     }
 
-    fun updateEditableResult(value: String) {
-        _uiState.update { it.copy(editableResult = value) }
-    }
+    override fun reduce(intent: ScanIntent) {
+        when (intent) {
+            is ScanIntent.CameraPermissionChanged -> {
+                setState { copy(hasCameraPermission = intent.granted) }
+            }
 
-    fun commitEditableResult() {
-        publishResult(_uiState.value.editableResult)
-    }
+            ScanIntent.RequestCameraPermissionClicked -> {
+                sendEffect(ScanEffect.RequestCameraPermission)
+            }
 
-    fun clearCurrentResult() {
-        _uiState.update { it.copy(currentResult = "", editableResult = "") }
-    }
+            is ScanIntent.CodeDetected -> {
+                publishDetectedCode(intent.value)
+            }
 
-    fun selectHistoryItem(value: String) {
-        publishResult(value, addToHistory = false, tabTarget = ScanTabTarget.Edit)
-    }
+            is ScanIntent.EditTextChanged -> {
+                setState { copy(editableResult = intent.value) }
+            }
 
-    fun clearHistory() {
-        viewModelScope.launch {
-            historyRepository.clear()
-            _messages.emit(getApplication<Application>().getString(R.string.message_history_cleared))
+            ScanIntent.ApplyEditedResultClicked -> {
+                publishResult(currentState.editableResult)
+            }
+
+            ScanIntent.ClearResultClicked -> {
+                setState { copy(currentResult = "", editableResult = "") }
+            }
+
+            ScanIntent.ImportImageClicked -> {
+                sendEffect(ScanEffect.LaunchImagePicker)
+            }
+
+            is ScanIntent.ImagePicked -> {
+                intent.uri?.let(::importFromUri)
+            }
+
+            is ScanIntent.ExternalImageReceived -> {
+                importFromUri(intent.uri)
+            }
+
+            is ScanIntent.HistoryItemClicked -> {
+                publishResult(
+                    value = intent.value,
+                    addToHistory = false,
+                    tabTarget = ScanTab.Edit
+                )
+            }
+
+            is ScanIntent.HistoryOpenLinkClicked -> {
+                openLink(intent.value)
+            }
+
+            ScanIntent.ClearHistoryClicked -> {
+                setState { copy(isClearHistoryDialogVisible = true) }
+            }
+
+            ScanIntent.ClearHistoryDialogDismissed -> {
+                setState { copy(isClearHistoryDialogVisible = false) }
+            }
+
+            ScanIntent.ClearHistoryConfirmed -> {
+                clearHistory()
+            }
+
+            ScanIntent.CopyResultClicked -> {
+                currentState.currentResult.trim().takeIf { it.isNotBlank() }?.let { result ->
+                    sendEffect(ScanEffect.CopyText(result))
+                }
+            }
+
+            ScanIntent.ShareResultClicked -> {
+                currentState.currentResult.trim().takeIf { it.isNotBlank() }?.let { result ->
+                    sendEffect(ScanEffect.ShareText(result))
+                }
+            }
+
+            ScanIntent.OpenResultClicked -> {
+                openLink(currentState.currentResult)
+            }
         }
     }
 
-    fun handleUri(uri: Uri?) {
-        uri ?: return
-        importFromUri(uri)
-    }
+    private fun publishDetectedCode(value: String) {
+        val now = System.currentTimeMillis()
+        if (now - lastScanTime <= SCAN_DEBOUNCE_MS) return
 
-    fun handleIntent(intent: Intent?) {
-        if (intent?.type?.startsWith("image/") != true) return
-        val uri = intent.clipData?.getItemAt(0)?.uri
-            ?: IntentCompat.getParcelableExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)
-            ?: return
-        importFromUri(uri)
+        lastScanTime = now
+        publishResult(value)
     }
 
     private fun importFromUri(uri: Uri) {
-        _uiState.update { it.copy(isImportingImage = true) }
-        uri.task
-            .addOnSuccessListener { barcodes ->
-                val value = barcodes.firstNotNullOfOrNull { it.displayValue?.trim() }
+        imageImportJob?.cancel()
+        val sequence = ++imageImportSequence
+        imageImportJob = viewModelScope.launch {
+            setState { copy(isImportingImage = true) }
+
+            try {
+                val value = imageBarcodeReader.readFirstDisplayValue(uri)
                 if (value.isNullOrBlank()) {
-                    emitMessage(getApplication<Application>().getString(R.string.message_no_code_found))
+                    sendEffect(ScanEffect.ShowSnackbar(R.string.message_no_code_found))
                 } else {
                     publishResult(value)
                 }
+            } catch (cancellation: CancellationException) {
+                throw cancellation
+            } catch (_: Exception) {
+                sendEffect(ScanEffect.ShowSnackbar(R.string.message_unable_read_image))
+            } finally {
+                if (sequence == imageImportSequence) {
+                    setState { copy(isImportingImage = false) }
+                }
             }
-            .addOnFailureListener {
-                emitMessage(getApplication<Application>().getString(R.string.message_unable_read_image))
-            }
-            .addOnCompleteListener {
-                _uiState.update { state -> state.copy(isImportingImage = false) }
-            }
+        }
     }
 
     private fun publishResult(
         value: String,
         addToHistory: Boolean = true,
-        tabTarget: ScanTabTarget = ScanTabTarget.Result
+        tabTarget: ScanTab = ScanTab.Result
     ) {
         val normalizedValue = value.trim()
         if (normalizedValue.isBlank()) return
 
-        _uiState.update {
-            it.copy(
+        setState {
+            copy(
                 currentResult = normalizedValue,
                 editableResult = normalizedValue
             )
         }
-        _tabRequests.tryEmit(tabTarget)
+        sendEffect(ScanEffect.NavigateToTab(tabTarget))
 
         if (addToHistory) {
             viewModelScope.launch {
@@ -143,9 +166,21 @@ class ScanViewModel(
         }
     }
 
-    private fun emitMessage(message: String) {
+    private fun clearHistory() {
+        setState { copy(isClearHistoryDialogVisible = false) }
         viewModelScope.launch {
-            _messages.emit(message)
+            historyRepository.clear()
+            sendEffect(ScanEffect.ShowSnackbar(R.string.message_history_cleared))
         }
+    }
+
+    private fun openLink(value: String) {
+        value.toOpenableUri()?.let { uri ->
+            sendEffect(ScanEffect.OpenUri(uri))
+        }
+    }
+
+    private companion object {
+        const val SCAN_DEBOUNCE_MS = 2_000L
     }
 }

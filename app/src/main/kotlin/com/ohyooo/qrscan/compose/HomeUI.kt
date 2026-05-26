@@ -1,5 +1,10 @@
 package com.ohyooo.qrscan.compose
 
+import android.Manifest
+import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
@@ -23,6 +28,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ContentAlpha
@@ -31,6 +37,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -55,14 +62,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.ohyooo.qrscan.R
-import com.ohyooo.qrscan.ScanTabTarget
+import com.ohyooo.qrscan.ScanEffect
+import com.ohyooo.qrscan.ScanIntent
+import com.ohyooo.qrscan.ScanState
+import com.ohyooo.qrscan.ScanTab
 import com.ohyooo.qrscan.ScanViewModel
 import com.ohyooo.qrscan.compose.theme.QRScanTheme
 import com.ohyooo.qrscan.compose.theme.heroGradientBottom
@@ -80,37 +94,89 @@ private enum class HomeTab(val titleRes: Int, val icon: ImageVector) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MainUI(
-    vm: ScanViewModel,
-    hasCameraPermission: Boolean,
-    onRequestCameraPermission: () -> Unit
-) {
-    val uiState by vm.uiState.collectAsState()
-    val currentResult = uiState.currentResult
-    val editableResult = uiState.editableResult
-    val history = uiState.history
-    val isImportingImage = uiState.isImportingImage
+fun MainUI(vm: ScanViewModel) {
+    val state by vm.state.collectAsState()
     val pagerState = rememberPagerState { HomeTab.entries.size }
     val scaffoldState = rememberScaffoldState()
+    val context = LocalContext.current
+    @Suppress("DEPRECATION")
+    val clipboardManager = LocalClipboardManager.current
+    val cameraPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        vm.dispatch(ScanIntent.CameraPermissionChanged(granted))
+    }
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        vm.dispatch(ScanIntent.ImagePicked(uri))
+    }
 
-    LaunchedEffect(Unit) {
-        vm.messages.collect { message ->
-            scaffoldState.snackbarHostState.showSnackbar(message)
+    LaunchedEffect(vm) {
+        vm.effects.collect { effect ->
+            when (effect) {
+                is ScanEffect.ShowSnackbar -> {
+                    scaffoldState.snackbarHostState.showSnackbar(context.getString(effect.messageRes))
+                }
+
+                is ScanEffect.NavigateToTab -> {
+                    val page = when (effect.target) {
+                        ScanTab.Result -> HomeTab.Result.ordinal
+                        ScanTab.Edit -> HomeTab.Edit.ordinal
+                    }
+                    if (pagerState.currentPage != page) {
+                        pagerState.scrollToPage(page)
+                    }
+                }
+
+                ScanEffect.RequestCameraPermission -> {
+                    cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                }
+
+                ScanEffect.LaunchImagePicker -> {
+                    imagePickerLauncher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                }
+
+                is ScanEffect.CopyText -> {
+                    clipboardManager.setText(AnnotatedString(effect.text))
+                }
+
+                is ScanEffect.ShareText -> {
+                    val intent = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_TEXT, effect.text)
+                    }
+                    try {
+                        context.startActivity(Intent.createChooser(intent, null))
+                    } catch (_: Exception) {
+                    }
+                }
+
+                is ScanEffect.OpenUri -> {
+                    context.openUri(effect.uri)
+                }
+            }
         }
     }
 
-    LaunchedEffect(Unit) {
-        vm.tabRequests.collect { target ->
-            val page = when (target) {
-                ScanTabTarget.Result -> HomeTab.Result.ordinal
-                ScanTabTarget.Edit -> HomeTab.Edit.ordinal
-            }
-            if (pagerState.currentPage != page) {
-                pagerState.scrollToPage(page)
-            }
-        }
-    }
+    ScanScreen(
+        state = state,
+        pagerState = pagerState,
+        scaffoldState = scaffoldState,
+        onIntent = vm::dispatch
+    )
+}
 
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun ScanScreen(
+    state: ScanState,
+    pagerState: PagerState,
+    scaffoldState: ScaffoldState,
+    onIntent: (ScanIntent) -> Unit
+) {
     Scaffold(
         scaffoldState = scaffoldState,
         backgroundColor = MaterialTheme.colors.background
@@ -132,10 +198,14 @@ fun MainUI(
 
             Box(modifier = Modifier.fillMaxSize()) {
                 HeroCameraLayer(
-                    hasResult = currentResult.isNotBlank(),
-                    hasCameraPermission = hasCameraPermission,
-                    onRequestCameraPermission = onRequestCameraPermission,
-                    onQrDetected = vm.qrCallback
+                    hasResult = state.hasResult,
+                    hasCameraPermission = state.hasCameraPermission,
+                    onRequestCameraPermission = {
+                        onIntent(ScanIntent.RequestCameraPermissionClicked)
+                    },
+                    onQrDetected = { value ->
+                        onIntent(ScanIntent.CodeDetected(value))
+                    }
                 )
 
                 HomeBottomSheet(
@@ -147,18 +217,8 @@ fun MainUI(
                 ) {
                     HomePagerContent(
                         pagerState = pagerState,
-                        currentResult = currentResult,
-                        editableResult = editableResult,
-                        history = history,
-                        isImportingImage = isImportingImage,
-                        hasCameraPermission = hasCameraPermission,
-                        onRequestCameraPermission = onRequestCameraPermission,
-                        onCommitEditedResult = vm::commitEditableResult,
-                        onClearResult = vm::clearCurrentResult,
-                        onTextChange = vm::updateEditableResult,
-                        onImport = vm::handleUri,
-                        onSelectHistoryItem = vm::selectHistoryItem,
-                        onClearHistory = vm::clearHistory
+                        state = state,
+                        onIntent = onIntent
                     )
                 }
             }
@@ -169,8 +229,8 @@ fun MainUI(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun HomeBottomSheet(
-    containerHeight: androidx.compose.ui.unit.Dp,
-    pagerState: androidx.compose.foundation.pager.PagerState,
+    containerHeight: Dp,
+    pagerState: PagerState,
     onTabSelected: suspend (Int) -> Unit,
     content: @Composable () -> Unit
 ) {
@@ -218,19 +278,9 @@ private fun HomeBottomSheet(
 
 @Composable
 private fun HomePagerContent(
-    pagerState: androidx.compose.foundation.pager.PagerState,
-    currentResult: String,
-    editableResult: String,
-    history: List<String>,
-    isImportingImage: Boolean,
-    hasCameraPermission: Boolean,
-    onRequestCameraPermission: () -> Unit,
-    onCommitEditedResult: () -> Unit,
-    onClearResult: () -> Unit,
-    onTextChange: (String) -> Unit,
-    onImport: (android.net.Uri?) -> Unit,
-    onSelectHistoryItem: (String) -> Unit,
-    onClearHistory: () -> Unit
+    pagerState: PagerState,
+    state: ScanState,
+    onIntent: (ScanIntent) -> Unit
 ) {
     HorizontalPager(
         state = pagerState,
@@ -238,32 +288,68 @@ private fun HomePagerContent(
     ) { index ->
         when (HomeTab.entries[index]) {
             HomeTab.Result -> ResultUI(
-                result = currentResult,
-                onCommitEditedResult = onCommitEditedResult,
-                onClearResult = onClearResult
+                result = state.currentResult,
+                canOpenLink = state.canOpenCurrentResult,
+                onCopyResult = {
+                    onIntent(ScanIntent.CopyResultClicked)
+                },
+                onShareResult = {
+                    onIntent(ScanIntent.ShareResultClicked)
+                },
+                onOpenResultLink = {
+                    onIntent(ScanIntent.OpenResultClicked)
+                },
+                onCommitEditedResult = {
+                    onIntent(ScanIntent.ApplyEditedResultClicked)
+                },
+                onClearResult = {
+                    onIntent(ScanIntent.ClearResultClicked)
+                }
             )
 
             HomeTab.Edit -> EditUI(
-                text = editableResult,
-                onTextChange = onTextChange,
-                onApply = onCommitEditedResult
+                text = state.editableResult,
+                onTextChange = { value ->
+                    onIntent(ScanIntent.EditTextChanged(value))
+                },
+                onApply = {
+                    onIntent(ScanIntent.ApplyEditedResultClicked)
+                }
             )
 
             HomeTab.Import -> LocalUI(
-                isImporting = isImportingImage,
-                onImport = onImport
+                isImporting = state.isImportingImage,
+                onChooseImage = {
+                    onIntent(ScanIntent.ImportImageClicked)
+                }
             )
 
             HomeTab.History -> HistoryUI(
-                history = history,
-                onSelect = onSelectHistoryItem
+                history = state.history,
+                onSelect = { value ->
+                    onIntent(ScanIntent.HistoryItemClicked(value))
+                },
+                onOpenLink = { value ->
+                    onIntent(ScanIntent.HistoryOpenLinkClicked(value))
+                }
             )
 
             HomeTab.Settings -> SettingUI(
-                historyCount = history.size,
-                hasCameraPermission = hasCameraPermission,
-                onRequestCameraPermission = onRequestCameraPermission,
-                onClearHistory = onClearHistory
+                historyCount = state.history.size,
+                hasCameraPermission = state.hasCameraPermission,
+                showClearHistoryDialog = state.isClearHistoryDialogVisible,
+                onRequestCameraPermission = {
+                    onIntent(ScanIntent.RequestCameraPermissionClicked)
+                },
+                onClearHistoryClick = {
+                    onIntent(ScanIntent.ClearHistoryClicked)
+                },
+                onDismissClearHistory = {
+                    onIntent(ScanIntent.ClearHistoryDialogDismissed)
+                },
+                onConfirmClearHistory = {
+                    onIntent(ScanIntent.ClearHistoryConfirmed)
+                }
             )
         }
     }
