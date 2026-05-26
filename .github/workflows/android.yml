@@ -60,6 +60,16 @@ jobs:
             .gradle
           key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/libs.versions.toml') }}-${{ github.run_id }}
 
+      - name: Upload APK artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-${{ steps.time.outputs.time }}
+          path: |
+            app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
+          retention-days: 7
+
       - name: Delete workflow runs
         uses: GitRML/delete-workflow-runs@main
         with:
