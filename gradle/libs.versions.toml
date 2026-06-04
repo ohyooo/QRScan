@@ -5,7 +5,7 @@ compile-sdk = "37"
 compile-minor = "0"
 
 agp = "9.2.1"
-kotlin = "2.3.21"
+kotlin = "2.4.0"
 workmanager = "2.8.1"
 serialization = "1.11.0"
 koin = "4.2.1"
@@ -20,7 +20,7 @@ agp = { id = "com.android.application", version.ref = "agp" }
 alp = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 ks = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kmm = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-jc = { id = "org.jetbrains.compose", version = "1.11.0" }
+jc = { id = "org.jetbrains.compose", version = "1.11.1" }
 cc = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
 [libraries]
@@ -44,7 +44,7 @@ google-accompanist-pager = { module = "com.google.accompanist:accompanist-pager"
 google-accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanist" }
 
 # AndroidX
-androidx-core-ktx = "androidx.core:core-ktx:1.18.0"
+androidx-core-ktx = "androidx.core:core-ktx:1.19.0"
 androidx-datastore-preferences = "androidx.datastore:datastore-preferences:1.2.1"
 androidx-activity-compose = "androidx.activity:activity-compose:1.13.0"
 androidx-fragment-ktx = "androidx.fragment:fragment-ktx:1.8.9"
