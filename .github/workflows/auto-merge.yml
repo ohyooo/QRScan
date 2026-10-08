@@ -4,22 +4,25 @@ on:
   pull_request_target:
     types:
       - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   dependabot-merge:
+    name: Auto Merge
+    if: >-
+      github.event.pull_request.user.login == 'dependabot[bot]' ||
+      github.event.pull_request.user.login == 'gradle-update-robot'
     runs-on: ubuntu-latest
-    if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' }}
+
     steps:
-      - uses: peter-evans/find-comment@main
-        id: find-comment
-        with:
-          token: ${{ secrets.ACTIONS_TRIGGER_PAT }}
-          issue-number: ${{ github.event.pull_request.number }}
-          body-includes: '@dependabot squash and merge'
-      - uses: peter-evans/create-or-update-comment@main
-        with:
-          token: ${{ secrets.ACTIONS_TRIGGER_PAT }}
-          comment-id: ${{ steps.find-comment.outputs.comment-id }}
-          issue-number: ${{ github.event.pull_request.number }}
-          body: '@dependabot squash and merge'
-          edit-mode: replace
+      - name: Enable auto-merge
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: gh pr merge --auto --squash "$PR_URL"
