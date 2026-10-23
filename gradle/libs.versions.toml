@@ -7,7 +7,7 @@ compile-minor = "0"
 agp = "9.4.1"
 kotlin = "2.4.21"
 workmanager = "2.8.1"
-serialization = "1.11.0"
+serialization = "1.12.0"
 koin = "4.2.2"
 
 accompanist = "0.36.0"
@@ -26,13 +26,13 @@ cc = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 [libraries]
 # kotlin
 # https://github.com/Kotlin/kotlinx.serialization/releases
-kotlinx-serialization-core = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.11.0"
+kotlinx-serialization-core = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.12.0"
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 kotlinx-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.8.0-0.6.x-compat"
 
 # https://github.com/Kotlin/kotlinx.coroutines/releases
-kotlinx-coroutines-android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0"
-kotlinx-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0"
+kotlinx-coroutines-android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.12.0"
+kotlinx-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.12.0"
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
