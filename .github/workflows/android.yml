@@ -44,8 +44,8 @@ jobs:
             gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/libs.versions.toml') }}-
             gradle-${{ runner.os }}-
 
-      - name: Build APK
-        run: chmod +x gradlew && ./gradlew :app:assembleRelease --build-cache
+      - name: Build Release AAB
+        run: chmod +x gradlew && ./gradlew :app:bundleRelease --build-cache
 
       - name: Save Gradle cache
         if: success()
@@ -58,15 +58,56 @@ jobs:
             .gradle
           key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/libs.versions.toml') }}-${{ github.run_id }}
 
-      - name: Upload APK artifact
-        if: success()
+      - name: Generate four signed ABI APKs from AAB
+        shell: bash
+        env:
+          APK_KEYSTORE: app/signkey.jks
+          APK_KEY_ALIAS: demo
+          APK_STORE_PASSWORD: '123456'
+          APK_KEY_PASSWORD: '123456'
+        run: |
+          bash .github/scripts/build-abi-apks.sh app QRScan
+
+      - name: Upload arm64-v8a APK without ZIP wrapping
         uses: actions/upload-artifact@v7
         with:
-          name: app-release
-          path: |
-            app/build/outputs/apk/release/*.apk
+          path: ci-output/abi-apks/QRScan-arm64-v8a.apk
+          archive: false
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 14
+
+      - name: Upload armeabi-v7a APK without ZIP wrapping
+        uses: actions/upload-artifact@v7
+        with:
+          path: ci-output/abi-apks/QRScan-armeabi-v7a.apk
+          archive: false
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload x86 APK without ZIP wrapping
+        uses: actions/upload-artifact@v7
+        with:
+          path: ci-output/abi-apks/QRScan-x86.apk
+          archive: false
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload x86_64 APK without ZIP wrapping
+        uses: actions/upload-artifact@v7
+        with:
+          path: ci-output/abi-apks/QRScan-x86_64.apk
+          archive: false
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload retrace mapping without ZIP wrapping
+        if: ${{ hashFiles('ci-output/abi-apks/QRScan-mapping.txt') != '' }}
+        uses: actions/upload-artifact@v7
+        with:
+          path: ci-output/abi-apks/QRScan-mapping.txt
+          archive: false
+          if-no-files-found: error
+          retention-days: 14
 
       - name: Delete workflow runs
         uses: GitRML/delete-workflow-runs@main
