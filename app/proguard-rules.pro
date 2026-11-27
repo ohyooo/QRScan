@@ -1,3 +1,8 @@
+# ML Kit discovers these registrars by manifest class name and calls their no-arg constructors.
+-keep,allowoptimization class com.google.mlkit.** implements com.google.firebase.components.ComponentRegistrar {
+    <init>();
+}
+
 # Keep `Companion` object fields of serializable classes.
 # This avoids serializer lookup through `getDeclaredClasses` as done for named companion objects.
 -if @kotlinx.serialization.Serializable class **
